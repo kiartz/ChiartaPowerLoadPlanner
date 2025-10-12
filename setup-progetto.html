@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Progetto - PowerLoad Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+    <h1>📝 Setup Progetto <span class="version">v0.5.0</span></h1>
+        <a href="index.html" class="btn btn-secondary">Torna alla Home</a>
+    </header>
+
+    <main class="container">
+        <section class="card">
+            <h2>Pannello di Controllo</h2>
+            <button id="add-switchboard-btn" class="btn">Aggiungi Quadro Principale</button>
+        </section>
+
+        <div id="workspace">
+            </div>
+    </main>
+
+    <div id="add-switchboard-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>Seleziona un Template dall'Inventario</h2>
+            <div id="inventory-switchboard-list"></div>
+            <div class="modal-actions">
+                <button type="button" id="cancel-add-sw-btn" class="btn btn-secondary">Annulla</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="quick-add-material-modal" class="modal-overlay modal-overlay-top hidden">
+        <div class="modal-content">
+            <h2>Aggiungi Nuovo Materiale all'Inventario</h2>
+            <form id="quick-add-material-form">
+                <label for="quick-material-name">Nome Materiale</label>
+                <input type="text" id="quick-material-name" placeholder="es. Faro LED 150W" required>
+                <label for="quick-material-watts">Potenza (Watt)</label>
+                <input type="number" id="quick-material-watts" min="0" required>
+                <div class="modal-actions">
+                    <button type="submit" class="btn">Salva Materiale</button>
+                    <button type="button" id="cancel-quick-add-btn" class="btn btn-secondary">Annulla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/setup.js"></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario Quadri - PowerLoad Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+    <h1>🎛️ Inventario Quadri Elettrici <span class="version">v0.5.0</span></h1>
+        <a href="index.html" class="btn btn-secondary">Torna alla Home</a>
+    </header>
+
+    <main class="container">
+        <section class="card">
+            <h2>Aggiungi Nuovo Quadro</h2>
+            <form id="switchboard-form">
+                <label for="switchboard-name">Nome Quadro (Template)</label>
+                <input type="text" id="switchboard-name" placeholder="es. Distro 63A CEE" required>
+                
+                <label for="switchboard-input">Connettore di Input</label>
+                <select id="switchboard-input" required>
+                    <option value="Morsettiera">Morsettiera</option>
+                    <option value="CEE 16A 5p">CEE 16A 5p</option>
+                    <option value="CEE 32A 5p">CEE 32A 5p</option>
+                    <option value="CEE 63A 5p">CEE 63A 5p</option>
+                    <option value="CEE 125A 5p">CEE 125A 5p</option>
+                    <option value="Powerlock 400A">Powerlock 400A</option>
+                    <option value="Altro">Altro</option>
+                </select>
+                
+                <h3>Prese di Uscita</h3>
+                <div id="outlets-container">
+                    </div>
+                <button type="button" id="add-outlet-btn" class="btn btn-secondary">Aggiungi Connessioni</button>
+                <hr>
+                <button type="submit">Salva Quadro</button>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>Lista Quadri</h2>
+            <div id="switchboard-list"></div>
+        </section>
+    </main>
+
+    <div id="edit-switchboard-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>Modifica Quadro Elettrico</h2>
+            <form id="edit-switchboard-form">
+                <input type="hidden" id="edit-switchboard-id">
+                
+                <label for="edit-switchboard-name">Nome Quadro (Template)</label>
+                <input type="text" id="edit-switchboard-name" required>
+
+                <label for="edit-switchboard-input">Connettore di Input</label>
+                <select id="edit-switchboard-input" required>
+                    <option value="Morsettiera">Morsettiera</option>
+                    <option value="CEE 16A 5p">CEE 16A 5p</option>
+                    <option value="CEE 32A 5p">CEE 32A 5p</option>
+                    <option value="CEE 63A 5p">CEE 63A 5p</option>
+                    <option value="CEE 125A 5p">CEE 125A 5p</option>
+                    <option value="Powerlock 400A">Powerlock 400A</option>
+                    <option value="Altro">Altro</option>
+                </select>
+
+                <h3>Prese di Uscita</h3>
+                <div id="edit-outlets-container"></div>
+                <button type="button" id="edit-add-outlet-btn" class="btn btn-secondary">Aggiungi Presa (Singola)</button>
+                
+                <div class="modal-actions">
+                    <button type="submit" class="btn">Salva Modifiche</button>
+                    <button type="button" id="cancel-edit-switchboard-btn" class="btn btn-secondary">Annulla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/inventario.js"></script>
+</body>
+</html>

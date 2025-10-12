@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario Materiale - PowerLoad Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+    <h1>🔌 Inventario Materiale <span class="version">v0.5.0</span></h1>
+        <a href="index.html" class="btn btn-secondary">Torna alla Home</a>
+    </header>
+
+    <main class="container">
+        <section class="card">
+            <h2>Aggiungi Nuovo Materiale</h2>
+            <form id="material-form">
+                <input type="text" id="material-name" placeholder="Nome Materiale (es. Faro LED 200W)" required>
+                <input type="number" id="material-watts" placeholder="Potenza (Watt)" min="0" required>
+                
+                <label for="material-connection">Tipo di Connessione</label>
+                <select id="material-connection" required>
+                    <option value="Monofase 220V 16A">Monofase 220V 16A</option>
+                    <option value="Monofase 220V 32A">Monofase 220V 32A</option>
+                    <option value="Pentapolare 380V 16A">Pentapolare 380V 16A</option>
+                    <option value="Pentapolare 380V 32A">Pentapolare 380V 32A</option>
+                    <option value="Pentapolare 380V 63A">Pentapolare 380V 63A</option>
+                </select>
+
+                <button type="submit">Aggiungi Materiale</button>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>Lista Materiali</h2>
+            <div id="material-list">
+                </div>
+        </section>
+    </main>
+
+    <div id="edit-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>Modifica Materiale</h2>
+            <form id="edit-material-form">
+                <input type="hidden" id="edit-material-id">
+                <label for="edit-material-name">Nome Materiale</label>
+                <input type="text" id="edit-material-name" required>
+                <label for="edit-material-watts">Potenza (Watt)</label>
+                <input type="number" id="edit-material-watts" min="0" required>
+
+                <label for="edit-material-connection">Tipo di Connessione</label>
+                <select id="edit-material-connection" required>
+                    <option value="Monofase 220V 16A">Monofase 220V 16A</option>
+                    <option value="Monofase 220V 32A">Monofase 220V 32A</option>
+                    <option value="Pentapolare 380V 16A">Pentapolare 380V 16A</option>
+                    <option value="Pentapolare 380V 32A">Pentapolare 380V 32A</option>
+                    <option value="Pentapolare 380V 63A">Pentapolare 380V 63A</option>
+                </select>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn">Salva Modifiche</button>
+                    <button type="button" id="cancel-edit-btn" class="btn btn-secondary">Annulla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/inventario.js"></script>
+</body>
+</html>

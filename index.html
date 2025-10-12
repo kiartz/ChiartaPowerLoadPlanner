@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerLoad Planner - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+    <h1>PowerLoad Planner <span class="version">v0.5.0</span></h1>
+    </header>
+
+    <main class="container">
+        <section class="card">
+            <h2>Dati Progetto</h2>
+            <input type="text" id="projectName" placeholder="Nome Lavoro">
+            <input type="text" id="projectLocation" placeholder="Luogo Evento">
+            <input type="text" id="projectVersion" placeholder="Versione Progetto">
+        </section>
+
+        <section class="card">
+            <h2>Gestione Progetto</h2>
+            <div class="nav-grid">
+                <button id="save-project-btn" class="btn">💾 Salva Progetto su File</button>
+                <button onclick="document.getElementById('load-project-input').click();" class="btn btn-secondary">📂 Carica Progetto da File</button>
+                <input type="file" id="load-project-input" style="display: none;" accept=".json">
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Menu Principale</h2>
+            <div class="nav-grid">
+                <a href="inventario-materiale.html" class="btn">🔌 Inventario Materiale</a>
+                <a href="inventario-quadri.html" class="btn">🎛️ Inventario Quadri</a>
+                <a href="setup-progetto.html" class="btn">📝 Crea Setup Evento</a>
+                <a href="report.html" class="btn">📊 Report Consumi</a>
+                <a href="schema.html" class="btn">📈 Schema Unifilare</a>
+            </div>
+        </section>
+    </main>
+    
+    <script src="js/main.js"></script>
+</body>
+</html>
