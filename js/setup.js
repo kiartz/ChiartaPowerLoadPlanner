@@ -148,7 +148,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="outlet-total-watts">${channelTotalWatts}W</div>
                                 <div class="outlet-actions">
                                     <button class="add-load-btn-quick" data-instance-id="${item.instanceId}" data-outlet-index="${outletIndex}" data-channel-index="${channelIndex}" title="Aggiungi utenza">+</button>
-                                    <button class="paste-loads-btn" title="Incolla utenza" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" ${!clipboard ? 'disabled' : ''}>📎</button>
+                                    <button class="copy-line-btn" title="Copia linea" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}">📋</button>
+                                    <button class="cut-line-btn" title="Taglia linea" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}">✂️</button>
+                                    <button class="paste-loads-btn" title="Incolla" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" ${!clipboard ? 'disabled' : ''}>📎</button>
                                 </div>
                             </div>`;
                     }
@@ -207,7 +209,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="outlet-total-watts">${outletTotalWatts}W</div>
                             <div class="outlet-actions">
                                 <button class="add-load-btn-quick" data-instance-id="${item.instanceId}" data-outlet-index="${outletIndex}" title="Aggiungi utenza">+</button>
-                                <button class="paste-loads-btn" title="Incolla utenza" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" ${!clipboard ? 'disabled' : ''}>📎</button>
+                                <button class="copy-line-btn" title="Copia linea" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}">📋</button>
+                                <button class="cut-line-btn" title="Taglia linea" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}">✂️</button>
+                                <button class="paste-loads-btn" title="Incolla" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" ${!clipboard ? 'disabled' : ''}>📎</button>
                             </div>
                         </div>`;
                 }
@@ -473,6 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (swInstance && swInstance.loads[loadKey] && swInstance.loads[loadKey][loadIndex]) {
                 clipboard = {
                     type: 'copy',
+                    contentType: 'single_load',
                     load: JSON.parse(JSON.stringify(swInstance.loads[loadKey][loadIndex])) // Deep copy
                 };
                 renderWorkspace();
@@ -486,9 +491,41 @@ document.addEventListener('DOMContentLoaded', () => {
             if (swInstance && swInstance.loads[loadKey] && swInstance.loads[loadKey][loadIndex]) {
                 clipboard = {
                     type: 'cut',
+                    contentType: 'single_load',
                     load: JSON.parse(JSON.stringify(swInstance.loads[loadKey][loadIndex]))
                 };
                 swInstance.loads[loadKey].splice(loadIndex, 1);
+                saveData();
+                renderWorkspace();
+            }
+            return;
+        }
+
+        // NUOVO: Gestione copia/taglia intera linea
+        if (target.matches('.copy-line-btn')) {
+            const { instanceId, loadKey } = target.dataset;
+            const swInstance = workspaceItems.find(item => item.instanceId == instanceId);
+            if (swInstance && swInstance.loads[loadKey]) {
+                clipboard = {
+                    type: 'copy',
+                    contentType: 'line',
+                    data: JSON.parse(JSON.stringify(swInstance.loads[loadKey])) // Deep copy dell'array di carichi
+                };
+                renderWorkspace(); // Per aggiornare lo stato del pulsante incolla
+            }
+            return;
+        }
+
+        if (target.matches('.cut-line-btn')) {
+            const { instanceId, loadKey } = target.dataset;
+            const swInstance = workspaceItems.find(item => item.instanceId == instanceId);
+            if (swInstance && swInstance.loads[loadKey]) {
+                clipboard = {
+                    type: 'cut',
+                    contentType: 'line',
+                    data: JSON.parse(JSON.stringify(swInstance.loads[loadKey]))
+                };
+                delete swInstance.loads[loadKey]; // Rimuove l'intera linea
                 saveData();
                 renderWorkspace();
             }
@@ -499,21 +536,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const { instanceId, loadKey } = target.dataset;
             const swInstance = workspaceItems.find(item => item.instanceId == instanceId);
             if (swInstance && clipboard) {
-                if (!swInstance.loads[loadKey]) {
-                    swInstance.loads[loadKey] = [];
+                if (clipboard.contentType === 'single_load') {
+                    if (!swInstance.loads[loadKey]) {
+                        swInstance.loads[loadKey] = [];
+                    }
+                    const newLoad = JSON.parse(JSON.stringify(clipboard.load));
+                    swInstance.loads[loadKey].push(newLoad);
+                } else if (clipboard.contentType === 'line') {
+                    // Incolla un'intera linea, sovrascrivendo quella esistente
+                    swInstance.loads[loadKey] = JSON.parse(JSON.stringify(clipboard.data));
                 }
-                
-                const newLoad = JSON.parse(JSON.stringify(clipboard.load));
-                
-                swInstance.loads[loadKey].push(newLoad);
 
                 if (clipboard.type === 'cut') {
                     clipboard = null; 
                 }
                 saveData();
                 renderWorkspace();
+
             } else if (!clipboard) {
-                alert('Nessuna utenza da incollare. Prima copia o taglia un\'utenza.');
+                alert('Nessun dato da incollare. Prima copia o taglia un\'utenza o un\'intera linea.');
             }
             return;
         }
@@ -626,6 +667,7 @@ document.addEventListener('DOMContentLoaded', () => {
             input.dataset.loadIndex = loadIndex;
             target.replaceWith(input);
             input.focus();
+            input.select();
             const saveLineName = () => {
                 const swInstance = workspaceItems.find(item => item.instanceId == instanceId);
                 if (swInstance) {
@@ -646,11 +688,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!swInstance) return;
             const swTemplate = switchboards.find(s => s.id === swInstance.templateId);
             const outletIndex = parseInt(loadKey.split('-')[0]);
-            const channelIndex = loadKey.split('-')[1] !== '0' ? parseInt(loadKey.split('-')[1]) : undefined;
+            const outlet = swTemplate.outlets[outletIndex];
+            const channelIndex = outlet.type === 'Socapex' ? parseInt(loadKey.split('-')[1]) : undefined;
             
             let outletTypeForFilter = channelIndex !== undefined ? 'Monofase 220V 16A' : swTemplate.outlets[outletIndex].type;
             
-            showLoadPopover(target.parentElement, outletTypeForFilter, parseInt(instanceId), (selection) => {
+            showLoadPopover(target.parentElement, outletTypeForFilter, swInstance.instanceId, (selection) => {
                 if (selection.isSwitchboard || selection.isMove) return; // Non facciamo nulla se viene selezionato un quadro qui
                 const newMaterialId = selection.id;
                 const swInstance = workspaceItems.find(item => item.instanceId == instanceId);

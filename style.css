@@ -358,6 +358,23 @@ button:hover, .btn:hover {
     border-radius: 50%;
 }
 
+/* MODIFICA: Stili per i pulsanti copia/taglia/incolla linea per renderli uniformi */
+.outlet-actions .copy-line-btn,
+.outlet-actions .cut-line-btn,
+.outlet-actions .paste-loads-btn {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    font-size: 14px;
+    margin-left: 5px;
+    border-radius: 4px;
+    background: none;
+    border: 1px solid var(--secondary-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .load-pill {
     background-color: var(--secondary-color);
     color: white;
@@ -1136,7 +1153,7 @@ body.pdf-export .version-footer { display: none; }
 }
 
 .outlet-actions .paste-loads-btn {
-    padding: 2px 6px;
+    padding: 5px 10px;
     font-size: 14px;
     line-height: 1;
     margin-left: 5px;
