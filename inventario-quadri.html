@@ -8,11 +8,27 @@
 </head>
 <body>
     <header>
-    <h1>🎛️ Inventario Quadri Elettrici <span class="version">v0.5.0</span></h1>
-        <a href="index.html" class="btn btn-secondary">Torna alla Home</a>
+        <h1>🎛️ Inventario Quadri Elettrici</h1>
+        <nav class="header-nav">
+            <a href="index.html" class="btn">Home</a>
+            <a href="inventario-materiale.html" class="btn">Inventario Materiale</a>
+            <a href="inventario-quadri.html" class="btn active">Inventario Quadri</a>
+            <a href="setup-progetto.html" class="btn">Crea Setup Evento</a>
+            <a href="report.html" class="btn">Report Consumi</a>
+            <a href="tabella.html" class="btn">Tabella Power Sheet</a>
+            <a href="schema-unifilare.html" class="btn">Schema unifilare</a>
+        </nav>
     </header>
 
     <main class="container">
+        <section class="card">
+            <h2>Gestione Inventario</h2>
+            <div class="inventory-actions" style="display: flex; gap: 15px;">
+                <button id="export-switchboards-btn" class="btn btn-secondary">Esporta Inventario Quadri</button>
+                <button id="import-switchboards-btn" class="btn btn-secondary">Importa e Unisci Inventario Quadri</button>
+                <input type="file" id="import-switchboards-input" class="hidden" accept=".json">
+            </div>
+        </section>
         <section class="card">
             <h2>Aggiungi Nuovo Quadro</h2>
             <form id="switchboard-form">
@@ -40,7 +56,10 @@
         </section>
 
         <section class="card">
-            <h2>Lista Quadri</h2>
+            <div class="list-header">
+                <h2>Lista Quadri</h2>
+                <input type="text" id="search-switchboard-input" placeholder="Cerca per nome..." style="width: 300px; margin-bottom: 0;">
+            </div>
             <div id="switchboard-list"></div>
         </section>
     </main>
@@ -78,5 +97,8 @@
     </div>
 
     <script src="js/inventario.js"></script>
+
+    <div class="version-footer">v0.6.3</div>
+    <div class="credit-footer">Created by Roberto Chiartano</div>
 </body>
 </html>

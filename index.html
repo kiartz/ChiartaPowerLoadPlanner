@@ -3,44 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PowerLoad Planner - Dashboard</title>
+    <title>PowerLoad Planner</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <header>
-    <h1>PowerLoad Planner <span class="version">v0.5.0</span></h1>
+        <h1>⚡ PowerLoad Planner</h1>
+        <nav class="header-nav">
+            <a href="index.html" class="btn active">Home</a>
+            <a href="inventario-materiale.html" class="btn">Inventario Materiale</a>
+            <a href="inventario-quadri.html" class="btn">Inventario Quadri</a>
+            <a href="setup-progetto.html" class="btn">Crea Setup Evento</a>
+            <a href="report.html" class="btn">Report Consumi</a>
+            <a href="tabella.html" class="btn">Tabella Power Sheet</a>
+            <a href="schema-unifilare.html" class="btn">Schema unifilare</a>
+        </nav>
     </header>
 
     <main class="container">
         <section class="card">
             <h2>Dati Progetto</h2>
-            <input type="text" id="projectName" placeholder="Nome Lavoro">
-            <input type="text" id="projectLocation" placeholder="Luogo Evento">
-            <input type="text" id="projectVersion" placeholder="Versione Progetto">
+            <form id="project-meta-form">
+                <label for="projectName">Nome Progetto</label>
+                <input type="text" id="projectName" placeholder="es. Concerto Piazza Maggiore">
+
+                <label for="projectLocation">Luogo</label>
+                <input type="text" id="projectLocation" placeholder="es. Bologna">
+
+                <label for="projectVersion">Versione</label>
+                <input type="text" id="projectVersion" placeholder="es. 1.0">
+            </form>
         </section>
 
         <section class="card">
             <h2>Gestione Progetto</h2>
-            <div class="nav-grid">
-                <button id="save-project-btn" class="btn">💾 Salva Progetto su File</button>
-                <button onclick="document.getElementById('load-project-input').click();" class="btn btn-secondary">📂 Carica Progetto da File</button>
-                <input type="file" id="load-project-input" style="display: none;" accept=".json">
-            </div>
-        </section>
-
-        <section class="card">
-            <h2>Menu Principale</h2>
-            <div class="nav-grid">
-                <a href="inventario-materiale.html" class="btn">🔌 Inventario Materiale</a>
-                <a href="inventario-quadri.html" class="btn">🎛️ Inventario Quadri</a>
-                <a href="setup-progetto.html" class="btn">📝 Crea Setup Evento</a>
-                <a href="report.html" class="btn">📊 Report Consumi</a>
-                <a href="schema.html" class="btn">📈 Schema Unifilare</a>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <button id="save-project-btn" class="btn">Salva Progetto su File</button>
+                <div>
+                    <label for="load-project-input" class="btn btn-secondary" style="cursor: pointer;">Carica Progetto da File</label>
+                    <input type="file" id="load-project-input" accept=".json" style="display: none;">
+                </div>
             </div>
         </section>
     </main>
-    
+
     <script src="js/main.js"></script>
+
+    <div class="version-footer">v0.6.3</div>
+    <div class="credit-footer">Created by Roberto Chiartano</div>
 </body>
 </html>

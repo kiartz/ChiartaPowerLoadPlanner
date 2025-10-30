@@ -1,4 +1,4 @@
-/* Stili Generali con Tema Scuro v0.5.0 */
+/* Stili Generali con Tema Scuro v0.6.3 */
 :root {
     --primary-color: #ffc107;
     --secondary-color: #6c757d;
@@ -35,11 +35,6 @@ header {
 header h1 {
     color: var(--primary-color);
     margin: 0;
-}
-
-header .version {
-    font-size: 0.8em;
-    color: var(--secondary-color);
 }
 
 .container {
@@ -101,6 +96,13 @@ button:hover, .btn:hover {
     background-color: var(--primary-color);
     color: var(--text-color-dark);
     box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+}
+
+/* NUOVO: Stile per il pulsante della pagina attiva */
+.btn.active {
+    background-color: var(--primary-color);
+    color: var(--text-color-dark);
+    cursor: default; /* Rende chiaro che cliccare non ha effetto */
 }
 
 .btn-secondary {
@@ -165,6 +167,17 @@ button:hover, .btn:hover {
     display: none;
 }
 
+/* NUOVO: Stile per l'header delle liste con campo di ricerca */
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.list-header h2 {
+    margin: 0;
+}
+
 /* =================================================================== */
 /* STILI WORKSPACE (AGGIORNATI)                                        */
 /* =================================================================== */
@@ -190,12 +203,31 @@ button:hover, .btn:hover {
     background-color: #f44336;
 }
 
+/* NUOVO STILE per il pulsante Duplica */
+.duplicate-sw-btn {
+    position: absolute;
+    top: 2px;
+    right: 55px; /* Spazio per il pulsante delete */
+    background-color: var(--primary-color);
+    color: var(--text-color-dark);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    line-height: 30px;
+    padding: 0;
+    text-align: center;
+    cursor: pointer;
+    z-index: 5;
+}
+
 /* NUOVO STILE per il pulsante Unlink */
 .unlink-sw-btn {
     position: absolute;
     /* MODIFICA 2: Spostato il pulsante più in alto */
     top: 2px;
-    right: 55px; /* 15px (margine) + 30px (bottone delete) + 10px (spazio) */
+    right: 95px; /* Spazio per delete e duplica */
     background-color: var(--secondary-color);
     color: white;
     border: none;
@@ -409,8 +441,9 @@ button:hover, .btn:hover {
 
 .add-load-popover {
     position: absolute;
-    right: 0;
-    top: 40px;
+    left: 0;
+    top: 100%;
+    margin-top: 5px;
     width: 300px;
     background-color: #333;
     border: 1px solid var(--border-color);
@@ -630,4 +663,498 @@ button:hover, .btn:hover {
     margin-top: 10px; /* Ridotto */
     padding-left: 15px; /* Ridotto */
     border-left: 3px solid var(--primary-color);
+}
+
+/* =================================================================== */
+/* STILI PAGINA TABELLA EXCEL (POWERSHEET)                             */
+/* =================================================================== */
+
+/* NUOVO: Stile per la navigazione nell'header della home */
+.header-nav {
+    display: flex;
+    gap: 15px;
+}
+
+.powerbox-section {
+    padding: 10px;
+    overflow-x: auto;
+    margin-bottom: 30px;
+    transition: box-shadow 0.5s ease-in-out; /* Per l'effetto di evidenziazione */
+}
+
+/* NUOVO: Stile per l'evidenziazione quando si clicca un link */
+.powerbox-section.highlight {
+    box-shadow: 0 0 25px rgba(255, 193, 7, 0.7);
+}
+
+/* CORREZIONE: Stili per la tabella annidata dei totali */
+.totals-wrapper-cell {
+    padding: 0 !important;
+    border: none !important;
+}
+.nested-totals-table {
+    width: 100%;
+    table-layout: fixed; /* Forza le colonne ad avere larghezza uguale */
+    border-collapse: collapse;
+}
+.nested-totals-table td {
+    border-top: 1px solid var(--border-color) !important;
+}
+
+.spreadsheet-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em; /* Ridotto leggermente il font */
+    /* RIMOSSO: min-width per permettere alla tabella di essere fluida */
+}
+
+.spreadsheet-table th, .spreadsheet-table td {
+    border: 1px solid var(--border-color);
+    padding: 7px; /* Ridotto il padding */
+    text-align: center;
+    vertical-align: middle;
+}
+
+.spreadsheet-table thead th {
+    font-weight: bold;
+    color: var(--text-color);
+    position: sticky;
+    top: 0;
+    background-color: var(--background-color);
+}
+
+.powerbox-name-cell {
+    background-color: var(--card-background) !important;
+    font-size: 1.4em;
+    font-weight: bold;
+    vertical-align: top;
+    padding-top: 12px; /* Ridotto il padding */
+    color: var(--primary-color);
+    /* RIPRISTINO: larghezza iniziale della prima colonna */
+    width: 140px; /* Aumentata leggermente la larghezza */
+}
+.powerbox-name-cell span {
+    font-size: 0.7em;
+    color: var(--secondary-color);
+}
+
+.soca-header {
+    font-size: 1.1em;
+}
+
+.soca-subheader {
+    font-size: 0.8em;
+    font-style: italic;
+    color: var(--secondary-color);
+}
+
+/* MODIFICA: Stile per le celle dei numeri di riga */
+.channel-number-cell {
+    font-weight: bold;
+    background-color: rgba(0,0,0,0.2);
+    text-align: left;
+    padding: 6px 5px; /* Ridotto il padding */
+    width: 1px; /* Forza la cella ad essere la più stretta possibile */
+    white-space: nowrap; /* Impedisce al testo di andare a capo */
+}
+.channel-number-cell strong {
+    font-size: 1.2em;
+    margin-right: 8px; /* Aumentato leggermente il margine */
+}
+.channel-number-cell span {
+    font-size: 0.8em;
+    color: var(--secondary-color);
+    font-weight: normal;
+}
+
+/* Colori delle colonne Socapex */
+.soca-header-0, .soca-col-0 { background-color: rgba(255, 242, 204, 0.1); }
+.soca-header-1, .soca-col-1 { background-color: rgba(217, 234, 211, 0.1); }
+.soca-header-2, .soca-col-2 { background-color: rgba(207, 226, 243, 0.1); }
+.soca-header-3, .soca-col-3 { background-color: rgba(248, 206, 204, 0.1); }
+.soca-header-4, .soca-col-4 { background-color: rgba(217, 217, 217, 0.1); }
+.soca-header-5, .soca-col-5 { background-color: rgba(235, 216, 237, 0.1); }
+
+.direct-header, .direct-col {
+    background-color: rgba(220, 220, 220, 0.15);
+}
+
+/* NUOVO: Stili per le colonne con classi specifiche per un controllo migliore */
+.spreadsheet-table .material-col {
+    text-align: left; /* Allinea il testo a sinistra */
+    white-space: normal; /* Permette al testo di andare a capo */
+    min-width: 163px; /* Imposta una larghezza minima per evitare che la colonna collassi */
+    width: auto; /* Permette alla colonna di espandersi per riempire lo spazio */
+}
+
+.spreadsheet-table .line-col {
+    width: 60px; /* Larghezza per colonna Linea */
+}
+
+.spreadsheet-table .qta-col {
+    width: 40px; /* Larghezza ridotta */
+}
+
+.spreadsheet-table .watt-col {
+    width: 50px; /* Larghezza ridotta */
+}
+
+.empty-fill {
+    background-color: rgba(0,0,0,0.1) !important;
+}
+
+/* NUOVO: Stili per le celle dei totali di fase */
+.phase-total-cell {
+    background-color: var(--card-background);
+    font-size: 1em;
+    font-weight: bold;
+    padding: 8px; /* Ridotto il padding */
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid var(--border-color);
+}
+.phase-total-cell strong {
+    color: var(--primary-color);
+}
+
+/* NUOVO: Colori per i totali di fase in base al carico */
+.phase-total-cell.phase-safe {
+    background-color: var(--safe-color-bg);
+}
+.phase-total-cell.phase-warning {
+    background-color: var(--warning-color-bg);
+}
+.phase-total-cell.phase-danger {
+    background-color: var(--danger-color-bg);
+}
+
+
+/* NUOVO: Stile per i link "salta-a" */
+a.jumplink {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+a.jumplink:hover {
+    text-decoration: underline;
+}
+
+/* Stile per le celle vuote delle uscite dirette */
+.empty-direct-cell {
+    background-color: rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Stile per l'ID Utenza evidenziato */
+.line-name-highlight {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* NUOVO: Stile per il numero di versione in basso a destra */
+.version-footer {
+    position: fixed;
+    bottom: 10px;
+    right: 15px;
+    font-size: 0.8em;
+    color: var(--secondary-color);
+    z-index: 100;
+}
+
+/* NUOVO: Stile per il credito in basso a sinistra */
+.credit-footer {
+    position: fixed;
+    bottom: 10px;
+    left: 15px;
+    font-size: 0.8em;
+    color: var(--secondary-color);
+    z-index: 100;
+}
+
+/* =================================================================== */
+/* STILI PER EXPORT PDF (TEMA CHIARO)                                  */
+/* =================================================================== */
+
+body.pdf-export {
+    --background-color: #ffffff;
+    --card-background: #ffffff;
+    --border-color: #cccccc;
+    --text-color: #000000;
+    --text-color-dark: #000000;
+    --primary-color: #d84315; /* Arancione scuro per contrasto */
+    --secondary-color: #555555;
+}
+
+/* Evita che le tabelle vengano spezzate tra le pagine */
+body.pdf-export .powerbox-section {
+    /* CORREZIONE BUG PDF: Aggiunge un piccolo margine superiore per evitare che il bordo
+       venga tagliato all'inizio di una nuova pagina. */
+    margin-top: 2px;
+    page-break-inside: avoid;
+}
+
+body.pdf-export .spreadsheet-table thead th {
+    background-color: #f2f2f2;
+}
+
+body.pdf-export .powerbox-name-cell {
+    background-color: #e0e0e0;
+}
+
+/* CORREZIONE BUG PDF: La cella con rowspan (nome quadro) a volte copre il bordo sinistro.
+   Questa regola sposta leggermente il contenuto a destra per evitare la sovrapposizione. */
+body.pdf-export .powerbox-name-cell {
+    /* CORREZIONE BUG PDF: Forza lo sfondo a rimanere dentro i bordi della cella,
+       evitando che copra il bordo della tabella. */
+    background-clip: padding-box !important;
+}
+
+/* NOTE: first-column sizing restored to `.powerbox-name-cell` defaults above */
+
+body.pdf-export .channel-number-cell {
+    background-color: #f2f2f2;
+}
+
+/* Colori delle colonne Socapex più chiari per stampa */
+body.pdf-export .soca-header-0, body.pdf-export .soca-col-0 { background-color: #fff8e1; }
+body.pdf-export .soca-header-1, body.pdf-export .soca-col-1 { background-color: #e8f5e9; }
+body.pdf-export .soca-header-2, body.pdf-export .soca-col-2 { background-color: #e3f2fd; }
+body.pdf-export .soca-header-3, body.pdf-export .soca-col-3 { background-color: #fbe9e7; }
+body.pdf-export .soca-header-4, body.pdf-export .soca-col-4 { background-color: #f5f5f5; }
+body.pdf-export .soca-header-5, body.pdf-export .soca-col-5 { background-color: #f3e5f5; }
+
+body.pdf-export .direct-header, body.pdf-export .direct-col {
+    background-color: #eeeeee;
+}
+
+body.pdf-export .empty-fill {
+    background-color: #fafafa !important;
+}
+
+body.pdf-export .empty-direct-cell {
+    background-color: #e0e0e0 !important;
+}
+
+body.pdf-export .version-footer { display: none; }
+
+/* =================================================================== */
+/* NUOVI STILI PER SCHEMA UNIFILARE                                    */
+/* =================================================================== */
+#schema-container {
+    position: relative;
+    overflow-x: auto;
+    padding: 20px;
+    min-height: 400px;
+}
+
+/* NUOVO: Stili per la funzionalità di pan (trascinamento con la mano) */
+#schema-container.active-pan {
+    cursor: grabbing;
+    cursor: -webkit-grabbing;
+    user-select: none; /* Impedisce la selezione del testo durante il drag */
+}
+
+
+/* NUOVO: Permette al contenitore dello schema di usare tutta la larghezza */
+.full-width-container {
+    max-width: none !important;
+    padding: 0 20px;
+}
+
+.schema-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 120px; /* Spazio tra le colonne di nodi - AUMENTATO */
+    min-width: fit-content; /* Forza il wrapper ad espandersi con il contenuto */
+}
+
+.schema-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* Spazio verticale tra nodi nella stessa colonna - RIDOTTO */
+}
+
+.node-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 65px; /* AUMENTATO per distanziare le utenze dal quadro */
+}
+
+.loads-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* RIDOTTO */
+    padding-top: 5px; /* RIDOTTO */
+}
+
+.node {
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    min-width: 280px; /* AUMENTATO */
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 2;
+}
+
+.node-power-supply {
+    border-style: dashed;
+    border-color: var(--primary-color);
+    min-width: 200px;
+}
+
+.node-switchboard {
+    border-left: 5px solid var(--primary-color);
+}
+
+.node-switchboard-error {
+    border-left: 5px solid var(--danger-color);
+}
+
+.node-title.error {
+    color: var(--danger-color);
+}
+
+.node-load {
+    min-width: 180px; /* RIDOTTO */
+    font-size: 0.9em;
+    padding: 8px 12px; /* RIDOTTO */
+    border-left: 3px solid var(--secondary-color);
+}
+
+.node-title {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.node-title small {
+    font-weight: normal;
+    color: var(--secondary-color);
+}
+
+.node-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 0.9em;
+}
+.node-details strong {
+    color: var(--text-color);
+}
+.node-details span {
+    color: #aaa;
+}
+
+/* Punti di connessione */
+.node-input-point {
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    border: 2px solid var(--background-color);
+}
+
+.outlet-dots {
+    position: absolute;
+    right: -40px;
+    top: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-end;
+}
+
+.outlet-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.outlet-number {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+.outlet-dot {
+    width: 12px;
+    height: 12px;
+    background-color: var(--secondary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    cursor: pointer;
+}
+.outlet-dot:hover {
+    background-color: var(--primary-color);
+}
+
+/* Linee di connessione SVG */
+.connection-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* MODIFICA: Stile applicato ai path curvi invece che alle linee rette */
+.connection-lines path {
+    stroke: var(--secondary-color);
+    stroke-width: 2;
+    stroke-dasharray: 4 2;
+    stroke-linejoin: round; /* NUOVO: Rende gli angoli più morbidi */
+    fill: none; /* Assicura che le curve non abbiano un riempimento colorato */
+}
+/* Stili per i pulsanti Copia/Taglia/Incolla */
+.load-pill .copy-load-btn,
+.load-pill .cut-load-btn {
+    background: none;
+    border: none;
+    color: white;
+    margin: 0;
+    padding: 0 4px;
+    cursor: pointer;
+    opacity: 0.7;
+    font-size: 14px; /* Più grande per essere leggibile */
+    line-height: 1;
+}
+.load-pill .copy-load-btn:hover,
+.load-pill .cut-load-btn:hover {
+    opacity: 1;
+    color: var(--primary-color);
+}
+
+.outlet-actions .paste-loads-btn {
+    padding: 2px 6px;
+    font-size: 14px;
+    line-height: 1;
+    margin-left: 5px;
+    border-radius: 4px;
+}
+.outlet-actions .paste-loads-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background-color: transparent;
+    color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.load-pill .copy-load-btn.copied,
+.load-pill .cut-load-btn.cut {
+    background-color: var(--primary-color);
+    color: var(--text-color-dark);
+    border-radius: 4px;
+    box-shadow: 0 0 8px var(--primary-color);
+    opacity: 1;
 }

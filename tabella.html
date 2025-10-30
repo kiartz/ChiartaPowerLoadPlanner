@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabella Power Sheet - PowerLoad Planner</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>📋 Tabella Power Sheet</h1>
+        <nav class="header-nav">
+            <a href="index.html" class="btn">Home</a>
+            <a href="inventario-materiale.html" class="btn">Inventario Materiale</a>
+            <a href="inventario-quadri.html" class="btn">Inventario Quadri</a>
+            <a href="setup-progetto.html" class="btn">Crea Setup Evento</a>
+            <a href="report.html" class="btn">Report Consumi</a>
+            <a href="tabella.html" class="btn active">Tabella Power Sheet</a>
+            <a href="schema-unifilare.html" class="btn">Schema unifilare</a>
+        </nav>
+    </header>
+
+    <main class="container-fluid">
+        <section class="card">
+            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                <button id="export-pdf-btn" class="btn">📄 Esporta in PDF</button>
+                <button id="export-png-btn" class="btn">🖼️ Esporta in PNG</button>
+                <button id="export-csv-btn" class="btn">📊 Esporta in CSV</button>
+                <button id="export-single-png-btn" class="btn">🗜️ Esporta Tabelle in ZIP</button>
+            </div>
+        </section>
+        <div id="powersheet-container"></div>
+    </main>
+
+    <script src="js/tabella.js"></script>
+
+    <div class="version-footer">v0.6.3</div>
+    <div class="credit-footer">Created by Roberto Chiartano</div>
+</body>
+</html>

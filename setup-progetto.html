@@ -8,8 +8,16 @@
 </head>
 <body>
     <header>
-    <h1>📝 Setup Progetto <span class="version">v0.5.0</span></h1>
-        <a href="index.html" class="btn btn-secondary">Torna alla Home</a>
+        <h1>📝 Setup Progetto</h1>
+        <nav class="header-nav">
+            <a href="index.html" class="btn">Home</a>
+            <a href="inventario-materiale.html" class="btn">Inventario Materiale</a>
+            <a href="inventario-quadri.html" class="btn">Inventario Quadri</a>
+            <a href="setup-progetto.html" class="btn active">Crea Setup Evento</a>
+            <a href="report.html" class="btn">Report Consumi</a>
+            <a href="tabella.html" class="btn">Tabella Power Sheet</a>
+            <a href="schema-unifilare.html" class="btn">Schema unifilare</a>
+        </nav>
     </header>
 
     <main class="container">
@@ -40,6 +48,14 @@
                 <input type="text" id="quick-material-name" placeholder="es. Faro LED 150W" required>
                 <label for="quick-material-watts">Potenza (Watt)</label>
                 <input type="number" id="quick-material-watts" min="0" required>
+                <label for="quick-material-input-connection">Connessione di Input</label>
+                <select id="quick-material-input-connection" required>
+                    <option value="Monofase 220V 16A">Monofase 220V 16A</option>
+                    <option value="Monofase 220V 32A">Monofase 220V 32A</option>
+                    <option value="Pentapolare 380V 16A">Pentapolare 380V 16A</option>
+                    <option value="Pentapolare 380V 32A">Pentapolare 380V 32A</option>
+                    <option value="Pentapolare 380V 63A">Pentapolare 380V 63A</option>
+                </select>
                 <div class="modal-actions">
                     <button type="submit" class="btn">Salva Materiale</button>
                     <button type="button" id="cancel-quick-add-btn" class="btn btn-secondary">Annulla</button>
@@ -49,5 +65,8 @@
     </div>
 
     <script src="js/setup.js"></script>
+
+    <div class="version-footer">v0.6.3</div>
+    <div class="credit-footer">Created by Roberto Chiartano</div>
 </body>
 </html>

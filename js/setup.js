@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let materials = JSON.parse(localStorage.getItem('powerload_materials')) || [];
     const switchboards = JSON.parse(localStorage.getItem('powerload_switchboards')) || [];
     let workspaceItems = JSON.parse(localStorage.getItem('powerload_setup')) || [];
+    let clipboard = null;
+    let popoverAnchor = null;
 
     const addSwitchboardBtn = document.getElementById('add-switchboard-btn');
     const workspaceDiv = document.getElementById('workspace');
@@ -47,6 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('powerload_materials', JSON.stringify(materials));
     }
     function removeActivePopover() {
+        if (popoverAnchor) {
+            popoverAnchor.style.position = '';
+            popoverAnchor = null;
+        }
         const existingPopover = document.querySelector('.add-load-popover');
         if (existingPopover) existingPopover.remove();
     }
@@ -69,8 +75,10 @@ document.addEventListener('DOMContentLoaded', () => {
         swCard.className = 'card switchboard-instance';
         swCard.dataset.instanceId = item.instanceId;
         
-        // NUOVO: Aggiungiamo il pulsante di "unlink" solo se il quadro è un figlio
-        let actionButtons = `<button class="delete-sw-btn" data-instance-id="${item.instanceId}" title="Elimina questo quadro">×</button>`;
+        let actionButtons = `
+            <button class="duplicate-sw-btn" data-instance-id="${item.instanceId}" title="Duplica questo quadro">⧉</button>
+            <button class="delete-sw-btn" data-instance-id="${item.instanceId}" title="Elimina questo quadro">×</button>
+        `;
         if (item.parentId) {
             actionButtons += `<button class="unlink-sw-btn" data-instance-id="${item.instanceId}" title="Scollega questo quadro">&#8602;</button>`;
         }
@@ -116,6 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                         ${lineNameDisplay}
                                         <input type="number" class="quantity-input" value="${load.quantity}" min="1" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" data-load-index="${loadIndex}">
                                         <span>x </span><span class="load-name" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" data-load-index="${loadIndex}">${material.name} <span class="load-group-total">(${groupTotalWatts}W)</span></span>
+                                        <button class="copy-load-btn" title="Copia utenza" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" data-load-index="${loadIndex}">📋</button>
+                                        <button class="cut-load-btn" title="Taglia utenza" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" data-load-index="${loadIndex}">✂️</button>
                                         <button class="delete-load-btn" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" data-load-index="${loadIndex}">×</button>
                                     </span>`;
                             }
@@ -137,7 +147,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="outlet-loads">${loadsHtml}</div>
                                 <div class="outlet-total-watts">${channelTotalWatts}W</div>
                                 <div class="outlet-actions">
-                                    <button class="add-load-btn-quick" data-instance-id="${item.instanceId}" data-outlet-index="${outletIndex}" data-channel-index="${channelIndex}">+</button>
+                                    <button class="add-load-btn-quick" data-instance-id="${item.instanceId}" data-outlet-index="${outletIndex}" data-channel-index="${channelIndex}" title="Aggiungi utenza">+</button>
+                                    <button class="paste-loads-btn" title="Incolla utenza" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" ${!clipboard ? 'disabled' : ''}>📎</button>
                                 </div>
                             </div>`;
                     }
@@ -168,6 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                     ${lineNameDisplay}
                                     <input type="number" class="quantity-input" value="${load.quantity}" min="1" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" data-load-index="${loadIndex}">
                                     <span>x </span><span class="load-name" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" data-load-index="${loadIndex}">${material.name} <span class="load-group-total">(${groupTotalWatts}W)</span></span>
+                                    <button class="copy-load-btn" title="Copia utenza" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" data-load-index="${loadIndex}">📋</button>
+                                    <button class="cut-load-btn" title="Taglia utenza" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" data-load-index="${loadIndex}">✂️</button>
                                     <button class="delete-load-btn" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" data-load-index="${loadIndex}">×</button>
                                 </span>`;
                         }
@@ -193,7 +206,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="outlet-loads">${loadsHtml}</div>
                             <div class="outlet-total-watts">${outletTotalWatts}W</div>
                             <div class="outlet-actions">
-                                <button class="add-load-btn-quick" data-instance-id="${item.instanceId}" data-outlet-index="${outletIndex}">+</button>
+                                <button class="add-load-btn-quick" data-instance-id="${item.instanceId}" data-outlet-index="${outletIndex}" title="Aggiungi utenza">+</button>
+                                <button class="paste-loads-btn" title="Incolla utenza" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" ${!clipboard ? 'disabled' : ''}>📎</button>
                             </div>
                         </div>`;
                 }
@@ -202,7 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const headerHtml = `<div class="instance-header"><span class="template-name">${swTemplate.name}</span><input type="text" class="instance-name-input" data-instance-id="${item.instanceId}" value="${item.instanceName || ''}" placeholder="Nome Specifico (es. Palco Luci)"><input type="text" class="instance-identifier-input" data-instance-id="${item.instanceId}" value="${item.instanceIdentifier || ''}" placeholder="ID (es. P1)"></div>`;
         
-        // MODIFICA: Utilizza la variabile actionButtons che include il pulsante condizionale
         swCard.innerHTML = `${actionButtons}${headerHtml}<div class="phase-totals"><div id="phase-r-${item.instanceId}"><strong>R:</strong> 0W / 0A</div><div id="phase-s-${item.instanceId}"><strong>S:</strong> 0W / 0A</div><div id="phase-t-${item.instanceId}"><strong>T:</strong> 0W / 0A</div></div><div class="outlets-container">${outletsHtml}</div>`;
         
         return swCard;
@@ -304,6 +317,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // MODIFICA: La funzione ora accetta l'ID del quadro "padre" per evitare di mostrarlo come collegabile
     function showLoadPopover(anchorElement, outletType, parentInstanceId, onSelect) {
         removeActivePopover();
+        popoverAnchor = anchorElement;
+        anchorElement.style.position = 'relative';
         const popover = document.createElement('div');
         popover.className = 'add-load-popover';
         
@@ -329,7 +344,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const renderMaterials = (filter) => {
             resultsMaterialsDiv.innerHTML = '';
             materials
-                .filter(m => m.name.toLowerCase().includes(filter.toLowerCase()) && m.connectionType === outletType)
+                .filter(m => {
+                    if (!m.name.toLowerCase().includes(filter.toLowerCase())) return false;
+                    // Per i canali socapex (identificati dal tipo di uscita monofase 16A), 
+                    // siamo più flessibili e includiamo qualsiasi materiale monofase da 16A.
+                    if (outletType === 'Monofase 220V 16A') {
+                        return m.connectionType && m.connectionType.includes('Monofase') && m.connectionType.includes('16A');
+                    }
+                    return m.connectionType === outletType;
+                })
                 .forEach(m => {
                     const resItem = document.createElement('div');
                     resItem.className = 'inventory-item';
@@ -443,6 +466,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
     workspaceDiv.addEventListener('click', (e) => {
         const target = e.target;
+
+        if (target.matches('.copy-load-btn')) {
+            const { instanceId, loadKey, loadIndex } = target.dataset;
+            const swInstance = workspaceItems.find(item => item.instanceId == instanceId);
+            if (swInstance && swInstance.loads[loadKey] && swInstance.loads[loadKey][loadIndex]) {
+                clipboard = {
+                    type: 'copy',
+                    load: JSON.parse(JSON.stringify(swInstance.loads[loadKey][loadIndex])) // Deep copy
+                };
+                renderWorkspace();
+            }
+            return;
+        }
+
+        if (target.matches('.cut-load-btn')) {
+            const { instanceId, loadKey, loadIndex } = target.dataset;
+            const swInstance = workspaceItems.find(item => item.instanceId == instanceId);
+            if (swInstance && swInstance.loads[loadKey] && swInstance.loads[loadKey][loadIndex]) {
+                clipboard = {
+                    type: 'cut',
+                    load: JSON.parse(JSON.stringify(swInstance.loads[loadKey][loadIndex]))
+                };
+                swInstance.loads[loadKey].splice(loadIndex, 1);
+                saveData();
+                renderWorkspace();
+            }
+            return;
+        }
+
+        if (target.matches('.paste-loads-btn')) {
+            const { instanceId, loadKey } = target.dataset;
+            const swInstance = workspaceItems.find(item => item.instanceId == instanceId);
+            if (swInstance && clipboard) {
+                if (!swInstance.loads[loadKey]) {
+                    swInstance.loads[loadKey] = [];
+                }
+                
+                const newLoad = JSON.parse(JSON.stringify(clipboard.load));
+                
+                swInstance.loads[loadKey].push(newLoad);
+
+                if (clipboard.type === 'cut') {
+                    clipboard = null; 
+                }
+                saveData();
+                renderWorkspace();
+            } else if (!clipboard) {
+                alert('Nessuna utenza da incollare. Prima copia o taglia un\'utenza.');
+            }
+            return;
+        }
+
         if (target.matches('.delete-sw-btn')) {
             const instanceId = parseInt(target.dataset.instanceId);
             if (confirm('Sei sicuro di voler eliminare questo quadro e tutti i suoi contenuti dal setup?')) {
@@ -645,29 +720,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    quickAddMaterialForm.addEventListener('submit', (e) => {
+        quickAddMaterialForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const name = quickMaterialNameInput.value.trim();
         const watts = parseInt(quickMaterialWattsInput.value);
-        if (name && watts >= 0) {
-            const newMaterial = { id: Date.now(), name, watts };
+        const connectionType = document.getElementById('quick-material-input-connection').value.trim();
+        if (name && watts >= 0 && connectionType) {
+            const newMaterial = { id: Date.now(), name, watts, connectionType };
             materials.push(newMaterial);
             saveMaterials();
-            const popoverResults = document.querySelector('.popover-results');
-            if (popoverResults) {
-                const searchInput = popoverResults.previousElementSibling;
-                const filter = searchInput ? searchInput.value : '';
-                popoverResults.innerHTML = '';
-                 materials.filter(m => m.name.toLowerCase().includes(filter.toLowerCase())).forEach(m => {
-                    const resItem = document.createElement('div');
-                    resItem.className = 'inventory-item';
-                    resItem.textContent = `${m.name} (${m.watts}W)`;
-                    resItem.dataset.materialId = m.id;
-                    resultsDiv.appendChild(resItem);
-                });
-            }
             quickAddMaterialForm.reset();
             quickAddMaterialModal.classList.add('hidden');
+            removeActivePopover();
+        } else {
+            alert('Per favore, compila tutti i campi, inclusa la connessione di input.');
         }
     });
 

@@ -28,6 +28,12 @@ function initMaterialInventory() {
     const editMaterialConnection = document.getElementById('edit-material-connection'); // NUOVO
     const cancelEditBtn = document.getElementById('cancel-edit-btn');
     let materials = JSON.parse(localStorage.getItem('powerload_materials')) || [];
+    
+    // NUOVO: Selettori per import/export
+    const exportBtn = document.getElementById('export-materials-btn');
+    const importBtn = document.getElementById('import-materials-btn');
+    const importInput = document.getElementById('import-materials-input');
+    const searchInput = document.getElementById('search-material-input'); // NUOVO
 
     function saveData() {
         localStorage.setItem('powerload_materials', JSON.stringify(materials));
@@ -35,11 +41,15 @@ function initMaterialInventory() {
 
     function renderMaterials() {
         materialListDiv.innerHTML = '';
-        if (materials.length === 0) {
+        const searchTerm = searchInput.value.toLowerCase();
+        const filteredMaterials = materials.filter(m => m.name.toLowerCase().includes(searchTerm));
+
+        if (filteredMaterials.length === 0) {
             materialListDiv.innerHTML = '<p>Nessun materiale in inventario.</p>';
+            if (searchTerm) materialListDiv.innerHTML = `<p>Nessun materiale trovato per "${searchInput.value}".</p>`;
             return;
         }
-        materials.forEach(material => {
+        filteredMaterials.forEach(material => {
             const item = document.createElement('div');
             item.className = 'inventory-item';
             item.innerHTML = `
@@ -131,10 +141,102 @@ function initMaterialInventory() {
     editMaterialWatts.addEventListener('focus', (event) => event.target.select());
 
     renderMaterials();
+
+    // -------------------------
+    // Export / Import handlers
+    // -------------------------
+    function downloadJSON(filename, data) {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    }
+
+    function exportMaterials() {
+        const stored = JSON.parse(localStorage.getItem('powerload_materials')) || [];
+        if (stored.length === 0) {
+            alert('Nessun materiale da esportare.');
+            return;
+        }
+        const projectMeta = JSON.parse(localStorage.getItem('powerload_projectMeta')) || {};
+        const base = projectMeta.name ? projectMeta.name.replace(/\s+/g, '_') : 'progetto_powerload';
+        const filename = `${base}_PLP_InventarioMateriale.json`;
+        downloadJSON(filename, stored);
+    }
+
+    function mergeImportedMaterials(importedArray) {
+        if (!Array.isArray(importedArray)) return 0;
+        // Normalize and deduplicate by name+watts+connectionType
+        const existingKeys = new Set(materials.map(m => `${m.name}||${m.watts}||${m.connectionType}`));
+        let added = 0;
+        importedArray.forEach(item => {
+            if (!item || !item.name) return;
+            const key = `${item.name}||${item.watts || 0}||${item.connectionType || ''}`;
+            if (!existingKeys.has(key)) {
+                // Ensure item has an id
+                const newItem = {
+                    id: Date.now() + Math.floor(Math.random() * 1000),
+                    name: item.name,
+                    watts: Number(item.watts) || 0,
+                    connectionType: item.connectionType || ''
+                };
+                materials.push(newItem);
+                existingKeys.add(key);
+                added++;
+            }
+        });
+        if (added > 0) {
+            saveData();
+            renderMaterials();
+        }
+        return added;
+    }
+
+    function importMaterialsFromFile(file) {
+        if (!file) return;
+        // Validate filename pattern: *_PLP_InventarioMateriale(.json)?
+        const validPattern = /^.+_PLP_InventarioMateriale(\.json)?$/i;
+        if (!validPattern.test(file.name)) {
+            alert('Nome file non valido. Il file da importare deve terminare con "_PLP_InventarioMateriale".');
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const json = JSON.parse(e.target.result);
+                const added = mergeImportedMaterials(json);
+                alert(`Importazione completata. Aggiunti ${added} materiali.`);
+            } catch (err) {
+                console.error(err);
+                alert('File non valido. Assicurati di selezionare un file .json con un array di materiali.');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // Wire buttons
+    if (exportBtn) exportBtn.addEventListener('click', exportMaterials);
+    if (importBtn && importInput) {
+        importBtn.addEventListener('click', () => importInput.click());
+        importInput.addEventListener('change', (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (file) importMaterialsFromFile(file);
+            // reset input to allow re-importing the same file if needed
+            importInput.value = '';
+        });
+    }
+
+    // NUOVO: Event listener per la ricerca
+    searchInput.addEventListener('input', renderMaterials);
 }
 
 // ===================================================================
-// LOGICA INVENTARIO QUADRI (AGGIORNATA per v0.5.0)
+// LOGICA INVENTARIO QUADRI (AGGIORNATA per v0.6.3)
 // ===================================================================
 function initSwitchboardInventory() {
     const switchboardForm = document.getElementById('switchboard-form');
@@ -152,6 +254,11 @@ function initSwitchboardInventory() {
     const editAddOutletBtn = document.getElementById('edit-add-outlet-btn');
     const cancelEditBtn = document.getElementById('cancel-edit-switchboard-btn');
     let switchboards = JSON.parse(localStorage.getItem('powerload_switchboards')) || [];
+    // Selettori import/export per i quadri
+    const exportSwitchboardsBtn = document.getElementById('export-switchboards-btn');
+    const importSwitchboardsBtn = document.getElementById('import-switchboards-btn');
+    const importSwitchboardsInput = document.getElementById('import-switchboards-input');
+    const searchInput = document.getElementById('search-switchboard-input'); // NUOVO
 
     function saveData() {
         localStorage.setItem('powerload_switchboards', JSON.stringify(switchboards));
@@ -159,11 +266,15 @@ function initSwitchboardInventory() {
 
     function renderSwitchboards() {
         switchboardListDiv.innerHTML = '';
-        if (switchboards.length === 0) {
+        const searchTerm = searchInput.value.toLowerCase();
+        const filteredSwitchboards = switchboards.filter(sb => sb.name.toLowerCase().includes(searchTerm));
+
+        if (filteredSwitchboards.length === 0) {
             switchboardListDiv.innerHTML = '<p>Nessun quadro in inventario.</p>';
+            if (searchTerm) switchboardListDiv.innerHTML = `<p>Nessun quadro trovato per "${searchInput.value}".</p>`;
             return;
         }
-        switchboards.forEach(sb => {
+        filteredSwitchboards.forEach(sb => {
             const item = document.createElement('div');
             item.className = 'inventory-item';
             let outletsHtml = '<ul>';
@@ -333,9 +444,45 @@ function initSwitchboardInventory() {
         if (!targetButton) return;
         const id = parseInt(targetButton.getAttribute('data-id'));
         if (targetButton.classList.contains('delete-btn')) {
-            if (confirm('Sei sicuro di voler eliminare questo quadro?')) {
+            if (confirm('Sei sicuro di voler eliminare questo quadro? Tutte le istanze nel setup saranno rimosse.')) {
+                // Rimuovi il template dall'inventario
                 switchboards = switchboards.filter(sb => sb.id !== id);
                 saveData();
+
+                // Rimuovi tutte le istanze e i loro discendenti dal setup (powerload_setup)
+                try {
+                    const workspaceItems = JSON.parse(localStorage.getItem('powerload_setup')) || [];
+                    // Trova tutte le instanceId che hanno templateId === id
+                    const toRemoveInstanceIds = new Set();
+                    workspaceItems.forEach(item => {
+                        if (item.templateId === id) toRemoveInstanceIds.add(item.instanceId);
+                    });
+                    // Ricorsivamente trova i discendenti
+                    const findDescendants = (parentId) => {
+                        workspaceItems.forEach(item => {
+                            if (item.parentId && toRemoveInstanceIds.has(item.parentId)) {
+                                if (!toRemoveInstanceIds.has(item.instanceId)) {
+                                    toRemoveInstanceIds.add(item.instanceId);
+                                    findDescendants(item.instanceId);
+                                }
+                            }
+                        });
+                    };
+                    // Avvia la ricerca di discendenti
+                    Array.from(toRemoveInstanceIds).forEach(pid => findDescendants(pid));
+
+                    const filtered = workspaceItems.filter(item => !toRemoveInstanceIds.has(item.instanceId));
+                    localStorage.setItem('powerload_setup', JSON.stringify(filtered));
+                } catch (err) {
+                    console.error('Errore rimuovendo istanze dal setup:', err);
+                }
+
+                // trigger render per pagine che leggono setup (se sono caricate)
+                try { if (typeof renderWorkspace === 'function') renderWorkspace(); } catch (e) {}
+                try { if (window.location.pathname && window.location.pathname.includes('report.html')) {
+                    if (typeof window.renderReport === 'function') window.renderReport();
+                }} catch (e) {}
+
                 renderSwitchboards();
             }
         } else if (targetButton.classList.contains('edit-btn')) {
@@ -392,4 +539,97 @@ function initSwitchboardInventory() {
     });
 
     renderSwitchboards();
+
+    // -------------------------
+    // Export / Import handlers - Switchboards
+    // -------------------------
+    function exportSwitchboards() {
+        const stored = JSON.parse(localStorage.getItem('powerload_switchboards')) || [];
+        if (stored.length === 0) {
+            alert('Nessun quadro da esportare.');
+            return;
+        }
+        const projectMeta = JSON.parse(localStorage.getItem('powerload_projectMeta')) || {};
+        const base = projectMeta.name ? projectMeta.name.replace(/\s+/g, '_') : 'progetto_powerload';
+        const filename = `${base}_PLP_InventarioQuadri.json`;
+        if (typeof downloadJSON === 'function') {
+            downloadJSON(filename, stored);
+            return;
+        }
+        const blob = new Blob([JSON.stringify(stored, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    }
+
+    function signatureForSwitchboard(sb) {
+        // Create a stable signature for deduping: name|input|outlets-json
+        const outletsSig = JSON.stringify(sb.outlets || []);
+        return `${sb.name}||${sb.input}||${outletsSig}`;
+    }
+
+    function mergeImportedSwitchboards(importedArray) {
+        if (!Array.isArray(importedArray)) return 0;
+        const existing = new Set(switchboards.map(s => signatureForSwitchboard(s)));
+        let added = 0;
+        importedArray.forEach(item => {
+            if (!item || !item.name) return;
+            const sig = signatureForSwitchboard(item);
+            if (!existing.has(sig)) {
+                const newItem = {
+                    id: Date.now() + Math.floor(Math.random() * 1000),
+                    name: item.name,
+                    input: item.input || '',
+                    outlets: Array.isArray(item.outlets) ? item.outlets : []
+                };
+                switchboards.push(newItem);
+                existing.add(sig);
+                added++;
+            }
+        });
+        if (added > 0) {
+            localStorage.setItem('powerload_switchboards', JSON.stringify(switchboards));
+            renderSwitchboards();
+        }
+        return added;
+    }
+
+    function importSwitchboardsFromFile(file) {
+        if (!file) return;
+        const validPattern = /^.+_PLP_InventarioQuadri(\.json)?$/i;
+        if (!validPattern.test(file.name)) {
+            alert('Nome file non valido. Il file da importare deve terminare con "_PLP_InventarioQuadri".');
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const json = JSON.parse(e.target.result);
+                const added = mergeImportedSwitchboards(json);
+                alert(`Importazione completata. Aggiunti ${added} quadri.`);
+            } catch (err) {
+                console.error(err);
+                alert('File non valido. Assicurati di selezionare un file .json con un array di quadri.');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    if (exportSwitchboardsBtn) exportSwitchboardsBtn.addEventListener('click', exportSwitchboards);
+    if (importSwitchboardsBtn && importSwitchboardsInput) {
+        importSwitchboardsBtn.addEventListener('click', () => importSwitchboardsInput.click());
+        importSwitchboardsInput.addEventListener('change', (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (file) importSwitchboardsFromFile(file);
+            importSwitchboardsInput.value = '';
+        });
+    }
+
+    // NUOVO: Event listener per la ricerca
+    searchInput.addEventListener('input', renderSwitchboards);
 }
