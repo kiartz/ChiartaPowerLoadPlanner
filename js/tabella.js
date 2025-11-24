@@ -4,15 +4,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const switchboards = JSON.parse(localStorage.getItem('powerload_switchboards')) || [];
     const materials = JSON.parse(localStorage.getItem('powerload_materials')) || [];
 
+    // NUOVO: Funzione per ordinare i quadri gerarchicamente (DFS)
+    function getHierarchicalOrder(items) {
+        const sorted = [];
+        const roots = items.filter(i => !i.parentId);
+
+        const traverse = (item) => {
+            sorted.push(item);
+            const children = items.filter(child => child.parentId === item.instanceId);
+            // Ordina i figli in base alla posizione dell'uscita (outletIndex-channelIndex)
+            children.sort((a, b) => {
+                if (!a.parentOutletKey || !b.parentOutletKey) return 0;
+                const [aOut, aCh] = a.parentOutletKey.split('-').map(Number);
+                const [bOut, bCh] = b.parentOutletKey.split('-').map(Number);
+                if (aOut !== bOut) return aOut - bOut;
+                return (aCh || 0) - (bCh || 0);
+            });
+            children.forEach(child => traverse(child));
+        };
+
+        roots.forEach(root => traverse(root));
+
+        // Aggiungi eventuali orfani
+        const visited = new Set(sorted.map(i => i.instanceId));
+        items.forEach(i => {
+            if (!visited.has(i.instanceId)) sorted.push(i);
+        });
+
+        return sorted;
+    }
+
+    const orderedWorkspaceItems = getHierarchicalOrder(workspaceItems);
+
     const container = document.getElementById('powersheet-container');
     const exportPdfBtn = document.getElementById('export-pdf-btn');
-    const exportPngBtn = document.getElementById('export-png-btn'); // NUOVO
-    const exportCsvBtn = document.getElementById('export-csv-btn'); // NUOVO
-    const exportSinglePngBtn = document.getElementById('export-single-png-btn'); // NUOVO
+    const exportPngBtn = document.getElementById('export-png-btn');
+    const exportCsvBtn = document.getElementById('export-csv-btn');
+    const exportSinglePngBtn = document.getElementById('export-single-png-btn');
     const VOLTAGE = 230;
 
     // NUOVO: Mappa per la capacità massima degli ingressi
     const INPUT_CAPACITY_AMPS = {
+        'CEE 16A 3p': 16,
+        'CEE 32A 3p': 32,
+        'CEE 63A 3p': 63,
         'CEE 16A 5p': 16,
         'CEE 32A 5p': 32,
         'CEE 63A 5p': 63,
@@ -57,7 +92,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const children = allItems.filter(child => child.parentId === item.instanceId);
         children.forEach(child => {
             const childTotals = calculateRecursivePhaseTotals(child, allItems);
-            ['R', 'S', 'T'].forEach(phase => aggregatedTotals[phase].watts += childTotals[phase].watts);
+
+            // Determine how to add child totals to parent
+            let parentOutletPhase = null;
+            if (child.parentOutletKey) {
+                const swTemplate = switchboards.find(s => s.id === item.templateId);
+                if (swTemplate) {
+                    const [outletIndex, channelIndex] = child.parentOutletKey.split('-').map(Number);
+                    const outlet = swTemplate.outlets[outletIndex];
+                    if (outlet) {
+                        if (outlet.type.includes('Monofase')) {
+                            parentOutletPhase = outlet.phase;
+                        } else if (outlet.type === 'Socapex') {
+                            parentOutletPhase = outlet.phases[channelIndex];
+                        }
+                    }
+                }
+            }
+
+            if (parentOutletPhase) {
+                // If parent outlet is single phase, ALL child loads go to that specific phase
+                const totalChildWatts = childTotals.R.watts + childTotals.S.watts + childTotals.T.watts;
+                aggregatedTotals[parentOutletPhase].watts += totalChildWatts;
+            } else {
+                ['R', 'S', 'T'].forEach(phase => aggregatedTotals[phase].watts += childTotals[phase].watts);
+            }
         });
         return aggregatedTotals;
     }
@@ -89,18 +148,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // NUOVO: Calcola i totali di fase per tutti i quadri in anticipo
         const phaseTotalsMap = new Map();
-        workspaceItems.forEach(item => {
+        orderedWorkspaceItems.forEach(item => {
             phaseTotalsMap.set(item.instanceId, calculateRecursivePhaseTotals(item, workspaceItems));
         });
 
         const totalWattsMap = new Map();
-        workspaceItems.forEach(item => {
+        orderedWorkspaceItems.forEach(item => {
             totalWattsMap.set(item.instanceId, calculateRecursiveTotalWatts(item.instanceId, workspaceItems));
         });
 
-        workspaceItems.forEach(item => {
+        orderedWorkspaceItems.forEach(item => {
             const swTemplate = switchboards.find(s => s.id === item.templateId);
             if (!swTemplate) return;
 
@@ -115,7 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Se non ci sono uscite, non fare nulla
             if (socapexOutlets.length === 0 && directOutlets.length === 0) {
                 return;
             }
@@ -127,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const powerboxName = item.instanceName || swTemplate.name;
             const powerboxInput = swTemplate.input;
 
-            // NUOVO: Logica per dividere i socapex in gruppi di 4
             const SOCAPEX_PER_TABLE = 3;
             const socapexChunks = [];
             for (let i = 0; i < socapexOutlets.length; i += SOCAPEX_PER_TABLE) {
@@ -136,42 +192,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let finalHTML = '';
             socapexChunks.forEach((socaChunk, chunkIndex) => {
-                // MODIFICA: Le uscite dirette non vengono più incluse qui.
-                const includeDirectOutlets = false; // Sempre false
-
                 let tableHTML = '<table class="spreadsheet-table">';
-
-                // --- HEADERS ---
                 tableHTML += '<thead><tr>';
-                // Il nome del quadro appare solo nella prima tabella e ha un rowspan maggiore
+
                 if (chunkIndex === 0) {
-                    tableHTML += `<th rowspan="3" class="powerbox-name-cell">${powerboxName}<br><span>${powerboxInput}</span></th>`;
+                    const instanceId = item.instanceIdentifier ? ` <span style="color: #d97706; font-weight: bold;">${item.instanceIdentifier}</span>` : '';
+                    tableHTML += `<th rowspan="3" class="powerbox-name-cell">${powerboxName}${instanceId}<br><span>${swTemplate.name}</span></th>`;
                 } else {
                     tableHTML += `<th rowspan="3" class="powerbox-name-cell"></th>`;
                 }
 
-                // MODIFICA: Riga per i totali di fase. Viene generata sempre per mantenere il layout, ma riempita solo nella prima tabella.
                 if (chunkIndex === 0) {
                     const phaseTotals = phaseTotalsMap.get(item.instanceId);
-                    ['R', 'S', 'T'].forEach(phase => {
+                    const isSinglePhase = swTemplate.input.includes('3p');
+
+                    if (isSinglePhase) {
+                        const totalWatts = phaseTotals.R.watts + phaseTotals.S.watts + phaseTotals.T.watts;
                         const maxAmps = INPUT_CAPACITY_AMPS[swTemplate.input] || Infinity;
-                        const watts = phaseTotals[phase].watts;
-                        const amps = watts / VOLTAGE;
-                        const percentage = maxAmps !== Infinity ? (amps / maxAmps) * 100 : 0;
+                        const totalAmps = totalWatts / VOLTAGE;
+                        const percentage = maxAmps !== Infinity ? (totalAmps / maxAmps) * 100 : 0;
 
                         let barClass = '';
                         if (percentage > 95) barClass = 'phase-danger';
                         else if (percentage > 80) barClass = 'phase-warning';
                         else if (percentage > 0) barClass = 'phase-safe';
 
-                        tableHTML += `<td colspan="4" class="phase-total-cell ${barClass}">
-                                        <strong>${phase}:</strong> ${watts.toFixed(0)}W / ${amps.toFixed(2)}A
+                        tableHTML += `<td colspan="12" class="phase-total-cell ${barClass}" style="text-align: center;">
+                                        <strong>Total Load:</strong> ${totalWatts.toFixed(0)}W / ${totalAmps.toFixed(2)}A
                                      </td>`;
-                    });
+                    } else {
+                        ['R', 'S', 'T'].forEach(phase => {
+                            const maxAmps = INPUT_CAPACITY_AMPS[swTemplate.input] || Infinity;
+                            const watts = phaseTotals[phase].watts;
+                            const amps = watts / VOLTAGE;
+                            const percentage = maxAmps !== Infinity ? (amps / maxAmps) * 100 : 0;
+
+                            let barClass = '';
+                            if (percentage > 95) barClass = 'phase-danger';
+                            else if (percentage > 80) barClass = 'phase-warning';
+                            else if (percentage > 0) barClass = 'phase-safe';
+
+                            tableHTML += `<td colspan="4" class="phase-total-cell ${barClass}">
+                                            <strong>${phase}:</strong> ${watts.toFixed(0)}W / ${amps.toFixed(2)}A
+                                         </td>`;
+                        });
+                    }
                 } else {
-                    // CORREZIONE: Replica la stessa struttura di celle (3 celle con colspan=4)
-                    // della prima tabella, ma le lascia vuote. Questo forza il motore di rendering
-                    // a mantenere le stesse proporzioni per le colonne.
                     tableHTML += `<td colspan="4" class="phase-total-cell"></td>`;
                     tableHTML += `<td colspan="4" class="phase-total-cell"></td>`;
                     tableHTML += `<td colspan="4" class="phase-total-cell"></td>`;
@@ -182,22 +248,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     tableHTML += `<th colspan="4" class="soca-header soca-header-${i % 6}">${socaId}</th>`;
                 });
                 tableHTML += '</tr><tr>';
-                // La prima cella della riga del corpo (channel-number-cell) creerà lo spazio necessario
                 socaChunk.forEach((soca, i) => {
                     tableHTML += `<th class="soca-subheader soca-col-${i % 6} line-col">Linea</th><th class="soca-subheader soca-col-${i % 6} material-col">Materiale</th><th class="soca-subheader soca-col-${i % 6} qta-col">QTA</th><th class="soca-subheader soca-col-${i % 6} watt-col">WATT</th>`;
                 });
-                tableHTML += '</tr></thead>'; 
+                tableHTML += '</tr></thead>';
 
-                // --- BODY ---
                 tableHTML += '<tbody>';
-                const maxRows = includeDirectOutlets ? Math.max(6, directOutlets.length) : 6;
+                const maxRows = 6;
                 for (let i = 0; i < maxRows; i++) {
                     tableHTML += '<tr>';
                     let firstCellContent = i + 1;
-                    // La prima colonna ora contiene solo il numero del canale socapex
                     tableHTML += `<td class="channel-number-cell">${firstCellContent}</td>`;
 
-                    // Colonne Socapex
                     socaChunk.forEach((soca, socaIndex) => {
                         if (i < 6) {
                             const socaId = (item.socapexIds && item.socapexIds[soca.originalIndex]) || String.fromCharCode(65 + (chunkIndex * SOCAPEX_PER_TABLE) + socaIndex);
@@ -233,34 +295,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 finalHTML += tableHTML;
             });
 
-            // NUOVO: Sezione per generare una tabella separata per le uscite dirette
             if (directOutlets.length > 0) {
                 let directTableHTML = '<table class="spreadsheet-table direct-outlets-table">';
-                // Header per uscite dirette
                 directTableHTML += '<thead><tr>';
-                // Mostra il nome del quadro solo se non ci sono tabelle socapex prima
                 if (socapexOutlets.length === 0) {
-                    directTableHTML += `<th rowspan="3" class="powerbox-name-cell">${powerboxName}<br><span>(Uscite Dirette)</span></th>`;
-                    // CORREZIONE: Riga totali con tabella annidata
+                    const instanceId = item.instanceIdentifier ? ` <span style="color: #d97706; font-weight: bold;">${item.instanceIdentifier}</span>` : '';
+                    directTableHTML += `<th rowspan="3" class="powerbox-name-cell">${powerboxName}${instanceId}<br><span>${swTemplate.name}</span></th>`;
                     const phaseTotals = phaseTotalsMap.get(item.instanceId);
-                    directTableHTML += `<td colspan="4" class="totals-wrapper-cell"><table class="nested-totals-table"><tr>`;
-                    ['R', 'S', 'T'].forEach(phase => {
+                    const isSinglePhase = swTemplate.input.includes('3p');
+
+                    if (isSinglePhase) {
+                        const totalWatts = phaseTotals.R.watts + phaseTotals.S.watts + phaseTotals.T.watts;
                         const maxAmps = INPUT_CAPACITY_AMPS[swTemplate.input] || Infinity;
-                        const watts = phaseTotals[phase].watts;
-                        const amps = watts / VOLTAGE;
-                        const percentage = maxAmps !== Infinity ? (amps / maxAmps) * 100 : 0;
+                        const totalAmps = totalWatts / VOLTAGE;
+                        const percentage = maxAmps !== Infinity ? (totalAmps / maxAmps) * 100 : 0;
 
                         let barClass = '';
                         if (percentage > 95) barClass = 'phase-danger';
                         else if (percentage > 80) barClass = 'phase-warning';
                         else if (percentage > 0) barClass = 'phase-safe';
 
-                        directTableHTML += `<td class="phase-total-cell ${barClass}"><strong>${phase}:</strong> ${watts.toFixed(0)}W / ${amps.toFixed(2)}A</td>`;
-                    });
-                    directTableHTML += `</tr></table></td>`;
+                        directTableHTML += `<td colspan="4" class="totals-wrapper-cell"><table class="nested-totals-table"><tr>
+                                                <td class="phase-total-cell ${barClass}" style="width: 100%; text-align: center;"><strong>Total Load:</strong> ${totalWatts.toFixed(0)}W / ${totalAmps.toFixed(2)}A</td>
+                                             </tr></table></td>`;
+                    } else {
+                        directTableHTML += `<td colspan="4" class="totals-wrapper-cell"><table class="nested-totals-table"><tr>`;
+                        ['R', 'S', 'T'].forEach(phase => {
+                            const maxAmps = INPUT_CAPACITY_AMPS[swTemplate.input] || Infinity;
+                            const watts = phaseTotals[phase].watts;
+                            const amps = watts / VOLTAGE;
+                            const percentage = maxAmps !== Infinity ? (amps / maxAmps) * 100 : 0;
+
+                            let barClass = '';
+                            if (percentage > 95) barClass = 'phase-danger';
+                            else if (percentage > 80) barClass = 'phase-warning';
+                            else if (percentage > 0) barClass = 'phase-safe';
+
+                            directTableHTML += `<td class="phase-total-cell ${barClass}"><strong>${phase}:</strong> ${watts.toFixed(0)}W / ${amps.toFixed(2)}A</td>`;
+                        });
+                        directTableHTML += `</tr></table></td>`;
+                    }
                 } else {
                     directTableHTML += `<th rowspan="3" class="powerbox-name-cell"></th>`;
-                    // Cella vuota per allineamento se ci sono socapex
                     directTableHTML += `<td colspan="4"></td>`;
                 }
                 directTableHTML += `</tr><tr><th colspan="4" class="soca-header direct-header">Uscite Dirette</th></tr><tr>`;
@@ -271,7 +347,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <th class="soca-subheader direct-col watt-col">WATT</th>
                 </tr></thead>`;
 
-                // Body per uscite dirette
                 directTableHTML += '<tbody>';
                 directOutlets.forEach((outlet, i) => {
                     directTableHTML += '<tr>';
@@ -347,7 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (projectMeta.name) headerParts.push(`<strong>Progetto:</strong> ${projectMeta.name}`);
         if (projectMeta.location) headerParts.push(`<strong>Luogo:</strong> ${projectMeta.location}`);
         if (projectMeta.version) headerParts.push(`<strong>Versione:</strong> ${projectMeta.version}`);
-        
+
         const headerElement = document.createElement('div');
         if (headerParts.length > 0) {
             headerElement.innerHTML = headerParts.join(' &nbsp; | &nbsp; ');
@@ -423,7 +498,7 @@ document.addEventListener('DOMContentLoaded', () => {
             useCORS: true,
             backgroundColor: '#ffffff'
         };
-        
+
         if (headerElement) {
             element.prepend(headerElement);
         }
@@ -501,10 +576,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Aggiungi la classe per lo stile di stampa
         document.body.classList.add('pdf-export');
 
-    // Aggiungi uno spacer temporaneo alla fine del container per evitare
-    // che html2pdf tagli l'ultimo elemento.
-    const spacer = document.createElement('div');
-    spacer.style.height = '100px';
+        // Aggiungi uno spacer temporaneo alla fine del container per evitare
+        // che html2pdf tagli l'ultimo elemento.
+        const spacer = document.createElement('div');
+        spacer.style.height = '100px';
         // NUOVO: Recupera i metadati del progetto per l'intestazione
         const projectMeta = JSON.parse(localStorage.getItem('powerload_projectMeta')) || {};
         const headerParts = [];
@@ -517,15 +592,15 @@ document.addEventListener('DOMContentLoaded', () => {
         element.appendChild(spacer);
 
         const opt = {
-          // MODIFICA: Aumentato il margine superiore per fare spazio all'intestazione
-          // Il formato è [top, left, bottom, right] in pollici.
-          margin: [0.5, 0.2, 0.4, 0.3],
-          filename: 'PowerSheet_Excel.pdf',
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
-          jsPDF: { unit: 'in', format: 'a2', orientation: 'portrait', putOnlyUsedFonts: true, floatPrecision: 16 }
+            // MODIFICA: Aumentato il margine superiore per fare spazio all'intestazione
+            // Il formato è [top, left, bottom, right] in pollici.
+            margin: [0.5, 0.2, 0.4, 0.3],
+            filename: 'PowerSheet_Excel.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+            jsPDF: { unit: 'in', format: 'a2', orientation: 'portrait', putOnlyUsedFonts: true, floatPrecision: 16 }
         };
-        
+
         exportPdfBtn.disabled = true;
         exportPdfBtn.textContent = 'Creazione PDF...';
 
@@ -583,15 +658,15 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const csvRows = [];
             const phaseTotalsMap = new Map();
-            workspaceItems.forEach(item => {
+            orderedWorkspaceItems.forEach(item => {
                 phaseTotalsMap.set(item.instanceId, calculateRecursivePhaseTotals(item, workspaceItems));
             });
             const totalWattsMap = new Map();
-            workspaceItems.forEach(item => {
+            orderedWorkspaceItems.forEach(item => {
                 totalWattsMap.set(item.instanceId, calculateRecursiveTotalWatts(item.instanceId, workspaceItems));
             });
 
-            workspaceItems.forEach(item => {
+            orderedWorkspaceItems.forEach(item => {
                 const swTemplate = switchboards.find(s => s.id === item.templateId);
                 if (!swTemplate) return;
 
@@ -688,6 +763,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (childBoard) {
                             const childTotalWatts = totalWattsMap.get(childBoard.instanceId) || 0;
                             const childTemplate = switchboards.find(s => s.id === childBoard.templateId);
+                            const childTemplateName = childTemplate ? childTemplate.name : 'Quadro';
                             const linkText = `-> ${childTemplate?.name || ''} - ${childBoard.instanceName || ''} (ID: ${childBoard.instanceIdentifier || 'N/D'})`;
                             row.push(linkText, '1', childTotalWatts.toFixed(0));
                         } else {

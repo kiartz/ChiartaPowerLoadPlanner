@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schema Unifilare - PowerLoad Planner</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <header>
         <h1>⛓️ Schema Unifilare a Nodi</h1>
@@ -22,16 +24,70 @@
 
     <main class="container">
         <section class="card">
-            <h2>Diagramma</h2>
+            <div class="schema-header">
+                <h2>Diagramma</h2>
+                <div class="schema-actions">
+                    <button id="add-power-supply-btn" class="btn">⚡ Fornitura</button>
+                    <button id="add-switchboard-btn" class="btn">📦 Quadro</button>
+                    <button id="add-load-btn" class="btn">🔌 Utenza</button>
+                    <button id="center-view-btn" class="btn">🎯 Centra Vista</button>
+                    <button id="export-png-btn" class="btn">📷 PNG</button>
+                    <button id="export-pdf-btn" class="btn">📄 PDF</button>
+                    <button id="reset-positions-btn" class="btn-reset-positions">↻ Reset Posizioni</button>
+                </div>
+            </div>
             <div id="schema-container">
-                <p>Nessun quadro trovato nel setup. Aggiungine uno dalla pagina "Crea Setup Evento" per visualizzare lo schema.</p>
+                <p>Nessun quadro trovato nel setup. Aggiungine uno dalla pagina "Crea Setup Evento" per visualizzare lo
+                    schema.</p>
             </div>
         </section>
     </main>
 
+    <!-- Modal per selezione quadri -->
+    <div id="add-switchboard-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>Seleziona Quadro dall'Inventario</h2>
+            <input type="text" id="switchboard-search" placeholder="Cerca quadro..." class="search-input">
+            <div id="inventory-switchboard-list"></div>
+            <div class="modal-actions">
+                <button type="button" id="cancel-add-sw-btn" class="btn btn-secondary">Annulla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per selezione utenze -->
+    <div id="add-load-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>Seleziona Utenza dall'Inventario</h2>
+            <input type="text" id="load-search" placeholder="Cerca utenza..." class="search-input">
+            <div id="inventory-load-list"></div>
+            <div class="modal-actions">
+                <button type="button" id="cancel-add-load-btn" class="btn btn-secondary">Annulla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popover per collegamento outlet -->
+    <div id="outlet-connection-popover" class="outlet-popover hidden">
+        <div class="popover-section">
+            <h4>Quadri Compatibili</h4>
+            <div id="compatible-switchboards"></div>
+        </div>
+        <div class="popover-section">
+            <h4>Utenze Compatibili</h4>
+            <input type="text" id="popover-load-search" placeholder="Cerca..." class="popover-search">
+            <div id="compatible-loads"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/core.js"></script>
     <script src="js/schema.js"></script>
-    
-    <div class="version-footer">v0.6.3</div>
+
+    <div class="version-footer">v0.7.2</div>
     <div class="credit-footer">Created by Roberto Chiartano</div>
 </body>
+
 </html>

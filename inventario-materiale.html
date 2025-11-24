@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventario Materiale - PowerLoad Planner</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <header>
         <h1>🔌 Inventario Materiale</h1>
@@ -34,7 +36,7 @@
             <form id="material-form">
                 <input type="text" id="material-name" placeholder="Nome Materiale (es. Faro LED 200W)" required>
                 <input type="number" id="material-watts" placeholder="Potenza (Watt)" min="0" required>
-                
+
                 <label for="material-connection">Tipo di Connessione</label>
                 <select id="material-connection" required>
                     <option value="Monofase 220V 16A">Monofase 220V 16A</option>
@@ -51,7 +53,8 @@
         <section class="card">
             <div class="list-header">
                 <h2>Lista Materiali</h2>
-                <input type="text" id="search-material-input" placeholder="Cerca per nome..." style="width: 300px; margin-bottom: 0;">
+                <input type="text" id="search-material-input" placeholder="Cerca per nome..."
+                    style="width: 300px; margin-bottom: 0;">
             </div>
             <div id="material-list"></div>
         </section>
@@ -86,7 +89,8 @@
 
     <script src="js/inventario.js"></script>
 
-    <div class="version-footer">v0.6.3</div>
+    <div class="version-footer">v0.7.2</div>
     <div class="credit-footer">Created by Roberto Chiartano</div>
 </body>
+
 </html>

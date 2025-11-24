@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const projectVersionInput = document.getElementById('projectVersion');
     const saveProjectBtn = document.getElementById('save-project-btn');
     const loadProjectInput = document.getElementById('load-project-input');
+    const newProjectBtn = document.getElementById('new-project-btn');
 
     // --- GESTIONE METADATI PROGETTO ---
     function saveProjectMeta() {
@@ -79,6 +80,22 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         reader.readAsText(file);
         loadProjectInput.value = '';
+    });
+
+    // --- GESTIONE NUOVO PROGETTO ---
+    newProjectBtn.addEventListener('click', () => {
+        if (confirm('Sei sicuro di voler creare un nuovo progetto? Questo eliminerà tutti i dati del progetto corrente ma manterrà gli inventari.')) {
+            // Elimina solo i dati del progetto, mantiene gli inventari
+            localStorage.removeItem('powerload_projectMeta');
+            localStorage.removeItem('powerload_setup');
+            
+            // Reset dei campi del form
+            projectNameInput.value = '';
+            projectLocationInput.value = '';
+            projectVersionInput.value = '';
+            
+            alert('Nuovo progetto creato! Gli inventari sono stati mantenuti.');
+        }
     });
 
     loadProjectMeta();

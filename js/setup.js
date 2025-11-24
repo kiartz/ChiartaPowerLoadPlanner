@@ -1,29 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const OUTLET_CAPACITY_WATTS = {
-        '16A': 3680,
-        '32A': 7360,
-        '63A': 14490,
-        '125A': 28750,
-        '400A': 92000,
-        'Socapex': 3680
-    };
-
-    const INPUT_CAPACITY_AMPS = {
-        'CEE 16A 5p': 16,
-        'CEE 32A 5p': 32,
-        'CEE 63A 5p': 63,
-        'CEE 125A 5p': 125,
-        'Powerlock 400A': 400
-    };
-
-    const OUTLET_TO_INPUT_MAPPING = {
-        'Pentapolare 380V 16A': 'CEE 16A 5p',
-        'Pentapolare 380V 32A': 'CEE 32A 5p',
-        'Pentapolare 380V 63A': 'CEE 63A 5p',
-        'Pentapolare 380V 125A': 'CEE 125A 5p',
-        'Powerlock 400A': 'Powerlock 400A'
-    };
+    // Constants imported from PLP_CONFIG
+    const { OUTLET_CAPACITY_WATTS, INPUT_CAPACITY_AMPS, OUTLET_TO_INPUT_MAPPING } = PLP_CONFIG;
 
     let materials = JSON.parse(localStorage.getItem('powerload_materials')) || [];
     const switchboards = JSON.parse(localStorage.getItem('powerload_switchboards')) || [];
@@ -74,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const swCard = document.createElement('div');
         swCard.className = 'card switchboard-instance';
         swCard.dataset.instanceId = item.instanceId;
-        
+
         let actionButtons = `
             <button class="duplicate-sw-btn" data-instance-id="${item.instanceId}" title="Duplica questo quadro">⧉</button>
             <button class="delete-sw-btn" data-instance-id="${item.instanceId}" title="Elimina questo quadro">×</button>
@@ -110,13 +88,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         const loadsOnChannel = item.loads[compositeKey] || [];
                         let loadsHtml = '';
                         let channelTotalWatts = 0;
-                        
+
                         loadsOnChannel.forEach((load, loadIndex) => {
                             const material = materials.find(m => m.id === load.materialId);
                             if (material) {
                                 const groupTotalWatts = load.quantity * material.watts;
                                 channelTotalWatts += groupTotalWatts;
-                                const lineNameDisplay = load.lineName 
+                                const lineNameDisplay = load.lineName
                                     ? `<span class="line-name-display" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" data-load-index="${loadIndex}">${load.lineName}</span>`
                                     : `<span class="line-name-display placeholder" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" data-load-index="${loadIndex}">ID Utenza</span>`;
                                 loadsHtml += `
@@ -130,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     </span>`;
                             }
                         });
-                        
+
                         let warningClass = '';
                         if (channelTotalWatts > 0) {
                             let capacity = OUTLET_CAPACITY_WATTS['Socapex'];
@@ -154,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </div>
                             </div>`;
                     }
-                    
+
                     const socaIdValue = (item.socapexIds && item.socapexIds[outletIndex]) || '';
                     outletsHtml += `
                         <div class="socapex-group">
@@ -169,11 +147,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     const loadsOnOutlet = item.loads[compositeKey] || [];
                     let loadsHtml = '';
                     let outletTotalWatts = 0;
-                    
+
                     loadsOnOutlet.forEach((load, loadIndex) => {
                         const material = materials.find(m => m.id === load.materialId);
-                        if(material) {
-                           const groupTotalWatts = load.quantity * material.watts;
+                        if (material) {
+                            const groupTotalWatts = load.quantity * material.watts;
                             outletTotalWatts += groupTotalWatts;
                             const lineNameDisplay = load.lineName ? `<span class="line-name-display" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" data-load-index="${loadIndex}">${load.lineName}</span>` : `<span class="line-name-display placeholder" data-instance-id="${item.instanceId}" data-load-key="${compositeKey}" data-load-index="${loadIndex}">ID Utenza</span>`;
                             loadsHtml += `
@@ -217,84 +195,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
-        
+
         const headerHtml = `<div class="instance-header"><span class="template-name">${swTemplate.name}</span><input type="text" class="instance-name-input" data-instance-id="${item.instanceId}" value="${item.instanceName || ''}" placeholder="Nome Specifico (es. Palco Luci)"><input type="text" class="instance-identifier-input" data-instance-id="${item.instanceId}" value="${item.instanceIdentifier || ''}" placeholder="ID (es. P1)"></div>`;
-        
-        swCard.innerHTML = `${actionButtons}${headerHtml}<div class="phase-totals"><div id="phase-r-${item.instanceId}"><strong>R:</strong> 0W / 0A</div><div id="phase-s-${item.instanceId}"><strong>S:</strong> 0W / 0A</div><div id="phase-t-${item.instanceId}"><strong>T:</strong> 0W / 0A</div></div><div class="outlets-container">${outletsHtml}</div>`;
-        
+
+        const isSinglePhase = swTemplate.input && swTemplate.input.includes('3p');
+        let phaseTotalsHtml = '';
+        if (isSinglePhase) {
+            phaseTotalsHtml = `<div class="phase-totals"><div id="phase-total-${item.instanceId}"><strong>Total Load:</strong> 0W / 0A</div></div>`;
+        } else {
+            phaseTotalsHtml = `<div class="phase-totals"><div id="phase-r-${item.instanceId}"><strong>R:</strong> 0W / 0A</div><div id="phase-s-${item.instanceId}"><strong>S:</strong> 0W / 0A</div><div id="phase-t-${item.instanceId}"><strong>T:</strong> 0W / 0A</div></div>`;
+        }
+
+        swCard.innerHTML = `${actionButtons}${headerHtml}${phaseTotalsHtml}<div class="outlets-container">${outletsHtml}</div>`;
+
         return swCard;
     }
 
     function calculateAllTotals() {
         workspaceItems.forEach(item => {
-            item.directPhaseTotals = calculateDirectLoads(item);
-        });
-        const topLevelItems = workspaceItems.filter(item => !item.parentId);
-        topLevelItems.forEach(item => {
-            const finalTotals = calculateRecursiveTotals(item);
+            // Use core logic for recursive calculation
+            const finalTotals = PLP_CORE.calculateRecursiveTotals(item, workspaceItems, switchboards, materials);
             updateTotalsUI(item.instanceId, finalTotals);
         });
     }
 
-    function calculateDirectLoads(item) {
-        const swTemplate = switchboards.find(s => s.id === item.templateId);
-        let phaseTotals = { R: { watts: 0 }, S: { watts: 0 }, T: { watts: 0 } };
-        if (!swTemplate) return phaseTotals;
-
-        Object.keys(item.loads).forEach(loadKey => {
-            const [outletIndex, channelIndex] = loadKey.split('-').map(Number);
-            const outlet = swTemplate.outlets[outletIndex];
-            if (!outlet) return;
-            const loads = item.loads[loadKey] || [];
-            loads.forEach(load => {
-                const material = materials.find(m => m.id === load.materialId);
-                if (!material) return;
-                const totalWattsForLoad = material.watts * load.quantity;
-                if (outlet.type === 'Socapex') {
-                    const channelPhase = outlet.phases[channelIndex];
-                    phaseTotals[channelPhase].watts += totalWattsForLoad;
-                } else if (outlet.type.includes('Monofase')) {
-                    phaseTotals[outlet.phase].watts += totalWattsForLoad;
-                } else { 
-                    phaseTotals.R.watts += totalWattsForLoad / 3;
-                    phaseTotals.S.watts += totalWattsForLoad / 3;
-                    phaseTotals.T.watts += totalWattsForLoad / 3;
-                }
-            });
-        });
-        return phaseTotals;
-    }
-
-    function calculateRecursiveTotals(item) {
-        let aggregatedTotals = JSON.parse(JSON.stringify(item.directPhaseTotals));
-        const children = workspaceItems.filter(child => child.parentId === item.instanceId);
-
-        children.forEach(child => {
-            const childTotals = calculateRecursiveTotals(child);
-            aggregatedTotals.R.watts += childTotals.R.watts;
-            aggregatedTotals.S.watts += childTotals.S.watts;
-            aggregatedTotals.T.watts += childTotals.T.watts;
-        });
-
-        if (item.parentId) {
-            updateTotalsUI(item.instanceId, aggregatedTotals);
-        }
-        return aggregatedTotals;
-    }
-
     function updateTotalsUI(instanceId, totals) {
-        const voltage = 230;
-        const phaseRDiv = document.getElementById(`phase-r-${instanceId}`);
-        const phaseSDiv = document.getElementById(`phase-s-${instanceId}`);
-        const phaseTDiv = document.getElementById(`phase-t-${instanceId}`);
-        if (!phaseRDiv || !phaseSDiv || !phaseTDiv) return;
-
+        const voltage = PLP_CONFIG.VOLTAGE;
         const swInstance = workspaceItems.find(item => item.instanceId === instanceId);
         if (!swInstance) return;
 
         const swTemplate = switchboards.find(s => s.id === swInstance.templateId);
-        const maxAmps = swTemplate ? INPUT_CAPACITY_AMPS[swTemplate.input] || Infinity : Infinity;
-        
+        if (!swTemplate) return;
+
+        const maxAmps = INPUT_CAPACITY_AMPS[swTemplate.input] || Infinity;
+        const isSinglePhase = swTemplate.input && swTemplate.input.includes('3p');
+
         const applyWarningClass = (element, amps) => {
             element.className = '';
             if (amps > 0) {
@@ -305,19 +240,37 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        const ampsR = totals.R.watts / voltage;
-        phaseRDiv.innerHTML = `<strong>R:</strong> ${totals.R.watts.toFixed(0)}W / ${ampsR.toFixed(2)}A`;
-        applyWarningClass(phaseRDiv, ampsR);
+        if (isSinglePhase) {
+            const totalDiv = document.getElementById(`phase-total-${instanceId}`);
+            if (totalDiv) {
+                const totalWatts = totals.R.watts + totals.S.watts + totals.T.watts;
+                const totalAmps = totalWatts / voltage;
+                totalDiv.innerHTML = `<strong>Total Load:</strong> ${totalWatts.toFixed(0)}W / ${totalAmps.toFixed(2)}A`;
+                applyWarningClass(totalDiv, totalAmps);
+            }
+        } else {
+            const phaseRDiv = document.getElementById(`phase-r-${instanceId}`);
+            const phaseSDiv = document.getElementById(`phase-s-${instanceId}`);
+            const phaseTDiv = document.getElementById(`phase-t-${instanceId}`);
 
-        const ampsS = totals.S.watts / voltage;
-        phaseSDiv.innerHTML = `<strong>S:</strong> ${totals.S.watts.toFixed(0)}W / ${ampsS.toFixed(2)}A`;
-        applyWarningClass(phaseSDiv, ampsS);
-
-        const ampsT = totals.T.watts / voltage;
-        phaseTDiv.innerHTML = `<strong>T:</strong> ${totals.T.watts.toFixed(0)}W / ${ampsT.toFixed(2)}A`;
-        applyWarningClass(phaseTDiv, ampsT);
+            if (phaseRDiv) {
+                const ampsR = totals.R.watts / voltage;
+                phaseRDiv.innerHTML = `<strong>R:</strong> ${totals.R.watts.toFixed(0)}W / ${ampsR.toFixed(2)}A`;
+                applyWarningClass(phaseRDiv, ampsR);
+            }
+            if (phaseSDiv) {
+                const ampsS = totals.S.watts / voltage;
+                phaseSDiv.innerHTML = `<strong>S:</strong> ${totals.S.watts.toFixed(0)}W / ${ampsS.toFixed(2)}A`;
+                applyWarningClass(phaseSDiv, ampsS);
+            }
+            if (phaseTDiv) {
+                const ampsT = totals.T.watts / voltage;
+                phaseTDiv.innerHTML = `<strong>T:</strong> ${totals.T.watts.toFixed(0)}W / ${ampsT.toFixed(2)}A`;
+                applyWarningClass(phaseTDiv, ampsT);
+            }
+        }
     }
-    
+
     // MODIFICA: La funzione ora accetta l'ID del quadro "padre" per evitare di mostrarlo come collegabile
     function showLoadPopover(anchorElement, outletType, parentInstanceId, onSelect) {
         removeActivePopover();
@@ -325,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
         anchorElement.style.position = 'relative';
         const popover = document.createElement('div');
         popover.className = 'add-load-popover';
-        
+
         // NUOVO: Aggiunta una sezione per i quadri esistenti
         popover.innerHTML = `
             <div class="popover-section-header">Materiali compatibili</div>
@@ -338,11 +291,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="popover-results-existing-switchboards"></div>
         `;
         anchorElement.appendChild(popover);
-        
+
         const searchInput = popover.querySelector('.popover-search');
         const resultsMaterialsDiv = popover.querySelector('.popover-results-materials');
         const resultsSwitchboardsDiv = popover.querySelector('.popover-results-switchboards');
-        const resultsExistingSwitchboardsDiv = popover.querySelector('.popover-results-existing-switchboards'); // NUOVO
+        const resultsExistingSwitchboardsDiv = popover.querySelector('.popover-results-existing-switchboards');
         searchInput.focus();
 
         const renderMaterials = (filter) => {
@@ -350,11 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
             materials
                 .filter(m => {
                     if (!m.name.toLowerCase().includes(filter.toLowerCase())) return false;
-                    // Per i canali socapex (identificati dal tipo di uscita monofase 16A), 
-                    // siamo più flessibili e includiamo qualsiasi materiale monofase da 16A.
-                    if (outletType === 'Monofase 220V 16A') {
-                        return m.connectionType && m.connectionType.includes('Monofase') && m.connectionType.includes('16A');
-                    }
+                    // Strict filtering logic: exact match required
                     return m.connectionType === outletType;
                 })
                 .forEach(m => {
@@ -369,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const renderSwitchboards = () => {
             resultsSwitchboardsDiv.innerHTML = '';
             const requiredInputType = OUTLET_TO_INPUT_MAPPING[outletType];
-            
+
             switchboards
                 .filter(sw => sw.input === requiredInputType)
                 .forEach(sw => {
@@ -387,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const requiredInputType = OUTLET_TO_INPUT_MAPPING[outletType];
 
             // Filtra solo i quadri "radice" (non già figli di altri) e che non siano il quadro padre stesso.
-            const movableItems = workspaceItems.filter(item => 
+            const movableItems = workspaceItems.filter(item =>
                 !item.parentId && item.instanceId !== parentInstanceId
             );
 
@@ -396,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (template && template.input === requiredInputType) {
                     const resItem = document.createElement('div');
                     resItem.className = 'inventory-item';
-                    
+
                     // Mostra più info per rendere il quadro riconoscibile
                     let displayText = template.name;
                     if (item.instanceName) displayText += ` (${item.instanceName})`;
@@ -408,20 +357,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-             if (resultsExistingSwitchboardsDiv.innerHTML === '') {
+            if (resultsExistingSwitchboardsDiv.innerHTML === '') {
                 resultsExistingSwitchboardsDiv.innerHTML = '<p style="font-size: 12px; text-align: center; color: var(--secondary-color); padding: 5px;">Nessun quadro compatibile da spostare.</p>';
             }
         };
 
         renderMaterials('');
         renderSwitchboards();
-        renderExistingSwitchboards(); // NUOVO
+        renderExistingSwitchboards();
         searchInput.addEventListener('input', () => renderMaterials(searchInput.value));
 
         popover.addEventListener('click', (ev) => {
             const materialItem = ev.target.closest('[data-material-id]');
             const switchboardItem = ev.target.closest('[data-switchboard-id]');
-            const existingSwitchboardItem = ev.target.closest('[data-instance-id-to-move]'); // NUOVO
+            const existingSwitchboardItem = ev.target.closest('[data-instance-id-to-move]');
 
             if (materialItem) {
                 const materialId = parseInt(materialItem.dataset.materialId);
@@ -433,7 +382,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 onSelect({ isSwitchboard: true, id: switchboardId });
                 removeActivePopover();
             }
-            // NUOVO: Gestisce il click su un quadro da spostare
             if (existingSwitchboardItem) {
                 const instanceIdToMove = parseInt(existingSwitchboardItem.dataset.instanceIdToMove);
                 onSelect({ isMove: true, instanceId: instanceIdToMove });
@@ -465,7 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
             addSwModal.classList.add('hidden');
         }
     });
-    
+
     cancelAddSwBtn.addEventListener('click', () => addSwModal.classList.add('hidden'));
 
     workspaceDiv.addEventListener('click', (e) => {
@@ -548,7 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (clipboard.type === 'cut') {
-                    clipboard = null; 
+                    clipboard = null;
                 }
                 saveData();
                 renderWorkspace();
@@ -571,7 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 };
                 findDescendants(instanceId);
-                
+
                 const idsToRemove = [instanceId, ...descendants];
                 workspaceItems = workspaceItems.filter(item => !idsToRemove.includes(item.instanceId));
 
@@ -597,12 +545,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const { outletIndex, channelIndex } = target.dataset;
             const swInstance = workspaceItems.find(item => item.instanceId === instanceId);
             const swTemplate = switchboards.find(s => s.id === swInstance.templateId);
-            
+
             let outletTypeForFilter = channelIndex !== undefined ? 'Monofase 220V 16A' : swTemplate.outlets[outletIndex].type;
 
             // MODIFICA: Passiamo l'ID del quadro padre al popover
             showLoadPopover(target.parentElement, outletTypeForFilter, instanceId, (selection) => {
-                
+
                 // NUOVO: Logica per spostare un quadro esistente
                 if (selection.isMove) {
                     const childToMove = workspaceItems.find(item => item.instanceId === selection.instanceId);
@@ -634,7 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         loadIndex = swInstance.loads[loadKey].findIndex(load => load.materialId === materialId);
                     } else {
                         swInstance.loads[loadKey].push({ materialId, quantity: 1, lineName: '' });
-                        loadIndex = swInstance.loads[loadKey].length - 1; 
+                        loadIndex = swInstance.loads[loadKey].length - 1;
                     }
                     saveData();
                     renderWorkspace();
@@ -690,9 +638,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const outletIndex = parseInt(loadKey.split('-')[0]);
             const outlet = swTemplate.outlets[outletIndex];
             const channelIndex = outlet.type === 'Socapex' ? parseInt(loadKey.split('-')[1]) : undefined;
-            
+
             let outletTypeForFilter = channelIndex !== undefined ? 'Monofase 220V 16A' : swTemplate.outlets[outletIndex].type;
-            
+
             showLoadPopover(target.parentElement, outletTypeForFilter, swInstance.instanceId, (selection) => {
                 if (selection.isSwitchboard || selection.isMove) return; // Non facciamo nulla se viene selezionato un quadro qui
                 const newMaterialId = selection.id;
@@ -708,7 +656,7 @@ document.addEventListener('DOMContentLoaded', () => {
             quickAddMaterialModal.classList.remove('hidden');
         }
     });
-    
+
     workspaceDiv.addEventListener('change', (e) => {
         if (e.target.matches('.quantity-input')) {
             const { instanceId, loadKey, loadIndex } = e.target.dataset;
@@ -743,7 +691,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (swCard) {
                 const regex = /#([^.-]+)/;
                 swCard.querySelectorAll('.outlet-info').forEach(info => {
-                    info.textContent = info.textContent.replace(regex, `#${newIdentifier}`);
+                    info.textContent = info.textContent.replace(regex, `#${newIdentifier} `);
                 });
             }
         }
@@ -757,13 +705,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (socaGroup) {
                 const regex = /-(.*?)\./;
                 socaGroup.querySelectorAll('.outlet-info').forEach(info => {
-                    info.textContent = info.textContent.replace(regex, `-${newSocaId}.`);
+                    info.textContent = info.textContent.replace(regex, `- ${newSocaId}.`);
                 });
             }
         }
     });
 
-        quickAddMaterialForm.addEventListener('submit', (e) => {
+    quickAddMaterialForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const name = quickMaterialNameInput.value.trim();
         const watts = parseInt(quickMaterialWattsInput.value);

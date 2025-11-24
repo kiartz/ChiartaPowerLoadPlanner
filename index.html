@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PowerLoad Planner</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <header>
         <h1>⚡ PowerLoad Planner</h1>
@@ -37,19 +39,23 @@
 
         <section class="card">
             <h2>Gestione Progetto</h2>
-            <div style="display: flex; gap: 15px; align-items: center;">
+            <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
                 <button id="save-project-btn" class="btn">Salva Progetto su File</button>
                 <div>
-                    <label for="load-project-input" class="btn btn-secondary" style="cursor: pointer;">Carica Progetto da File</label>
+                    <label for="load-project-input" class="btn btn-secondary" style="cursor: pointer;">Carica Progetto
+                        da File</label>
                     <input type="file" id="load-project-input" accept=".json" style="display: none;">
                 </div>
+                <button id="new-project-btn" class="btn"
+                    style="border-color: var(--danger-color); color: var(--danger-color);">Nuovo Progetto</button>
             </div>
         </section>
     </main>
 
     <script src="js/main.js"></script>
 
-    <div class="version-footer">v0.6.3</div>
+    <div class="version-footer">v0.7.2</div>
     <div class="credit-footer">Created by Roberto Chiartano</div>
 </body>
+
 </html>

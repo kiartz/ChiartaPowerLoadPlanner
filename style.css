@@ -25,7 +25,7 @@ body {
 header {
     background: var(--card-background);
     padding: 20px 40px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -43,12 +43,20 @@ header h1 {
     padding: 0 20px;
 }
 
+.container.full-width-container {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
 .card {
     background: var(--card-background);
     padding: 25px;
     border-radius: 8px;
     border: 1px solid var(--border-color);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     margin-bottom: 25px;
     position: relative;
 }
@@ -57,10 +65,12 @@ h2 {
     padding-bottom: 10px;
     color: var(--primary-color);
     margin-top: 0;
-    border-bottom: none; 
+    border-bottom: none;
 }
 
-input[type="text"], input[type="number"], select {
+input[type="text"],
+input[type="number"],
+select {
     width: 100%;
     padding: 12px;
     margin-bottom: 12px;
@@ -71,13 +81,16 @@ input[type="text"], input[type="number"], select {
     color: var(--text-color);
 }
 
-input[type="text"]:focus, input[type="number"]:focus, select:focus {
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
 }
 
-button, .btn {
+button,
+.btn {
     display: inline-block;
     padding: 12px 20px;
     border: 2px solid var(--primary-color);
@@ -92,7 +105,8 @@ button, .btn {
     transition: all 0.2s ease-in-out;
 }
 
-button:hover, .btn:hover {
+button:hover,
+.btn:hover {
     background-color: var(--primary-color);
     color: var(--text-color-dark);
     box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
@@ -102,7 +116,8 @@ button:hover, .btn:hover {
 .btn.active {
     background-color: var(--primary-color);
     color: var(--text-color-dark);
-    cursor: default; /* Rende chiaro che cliccare non ha effetto */
+    cursor: default;
+    /* Rende chiaro che cliccare non ha effetto */
 }
 
 .btn-secondary {
@@ -110,6 +125,7 @@ button:hover, .btn:hover {
     background-color: var(--secondary-color);
     color: white;
 }
+
 .btn-secondary:hover {
     background-color: #868e96;
     border-color: #868e96;
@@ -149,7 +165,7 @@ button:hover, .btn:hover {
     padding: 30px;
     border-radius: 8px;
     border: 1px solid var(--border-color);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
     width: 90%;
     max-width: 700px;
     max-height: 85vh;
@@ -174,6 +190,7 @@ button:hover, .btn:hover {
     align-items: center;
     margin-bottom: 20px;
 }
+
 .list-header h2 {
     margin: 0;
 }
@@ -184,7 +201,7 @@ button:hover, .btn:hover {
 .delete-sw-btn {
     position: absolute;
     /* MODIFICA 2: Spostato il pulsante più in alto */
-    top: 2px; 
+    top: 2px;
     right: 15px;
     background-color: var(--danger-color);
     color: white;
@@ -199,6 +216,7 @@ button:hover, .btn:hover {
     cursor: pointer;
     z-index: 5;
 }
+
 .delete-sw-btn:hover {
     background-color: #f44336;
 }
@@ -207,7 +225,8 @@ button:hover, .btn:hover {
 .duplicate-sw-btn {
     position: absolute;
     top: 2px;
-    right: 55px; /* Spazio per il pulsante delete */
+    right: 55px;
+    /* Spazio per il pulsante delete */
     background-color: var(--primary-color);
     color: var(--text-color-dark);
     border: none;
@@ -227,7 +246,8 @@ button:hover, .btn:hover {
     position: absolute;
     /* MODIFICA 2: Spostato il pulsante più in alto */
     top: 2px;
-    right: 95px; /* Spazio per delete e duplica */
+    right: 95px;
+    /* Spazio per delete e duplica */
     background-color: var(--secondary-color);
     color: white;
     border: none;
@@ -242,6 +262,7 @@ button:hover, .btn:hover {
     z-index: 5;
     font-weight: bold;
 }
+
 .unlink-sw-btn:hover {
     background-color: #868e96;
 }
@@ -255,12 +276,14 @@ button:hover, .btn:hover {
     padding-bottom: 10px;
     margin-bottom: 15px;
 }
+
 .instance-header .template-name {
     font-size: 1.5em;
     font-weight: bold;
     color: var(--primary-color);
     white-space: nowrap;
 }
+
 .instance-header .instance-name-input,
 .instance-header .instance-identifier-input {
     padding: 8px;
@@ -268,9 +291,11 @@ button:hover, .btn:hover {
     font-size: 1em;
     height: 40px;
 }
+
 .instance-header .instance-name-input {
     flex-grow: 1;
 }
+
 .instance-header .instance-identifier-input {
     flex-basis: 150px;
 }
@@ -279,25 +304,28 @@ button:hover, .btn:hover {
     display: flex;
     justify-content: space-around;
     gap: 10px;
-    background: rgba(0,0,0,0.2);
+    background: rgba(0, 0, 0, 0.2);
     padding: 10px;
     border-radius: 4px;
     margin-bottom: 20px;
 }
 
-.phase-totals > div {
+.phase-totals>div {
     flex-grow: 1;
     padding: 8px 12px;
     border-radius: 4px;
     text-align: center;
     transition: background-color 0.3s ease;
 }
+
 .phase-totals .phase-safe {
     background-color: var(--safe-color-bg);
 }
+
 .phase-totals .phase-warning {
     background-color: var(--warning-color-bg);
 }
+
 .phase-totals .phase-danger {
     background-color: var(--danger-color-bg);
 }
@@ -310,19 +338,23 @@ button:hover, .btn:hover {
     border-radius: 4px;
     transition: background-color 0.3s ease;
 }
+
 .outlet-row.outlet-safe {
     background-color: var(--safe-color-bg);
 }
+
 .outlet-row.outlet-warning {
     background-color: var(--warning-color-bg);
 }
+
 .outlet-row.outlet-danger {
     background-color: var(--danger-color-bg);
 }
 
-.outlets-container > .outlet-row:last-child {
+.outlets-container>.outlet-row:last-child {
     border-bottom: none;
 }
+
 .outlet-info {
     flex-basis: 30%;
     font-weight: bold;
@@ -330,6 +362,7 @@ button:hover, .btn:hover {
     padding-top: 5px;
     white-space: nowrap;
 }
+
 .outlet-total-watts {
     flex-basis: 15%;
     font-size: 0.9em;
@@ -338,6 +371,7 @@ button:hover, .btn:hover {
     text-align: right;
     padding-top: 5px;
 }
+
 .outlet-loads {
     flex-grow: 1;
     display: flex;
@@ -346,11 +380,13 @@ button:hover, .btn:hover {
     gap: 5px;
     padding-left: 15px;
 }
+
 .outlet-actions {
     position: relative;
     padding-right: 10px;
     padding-top: 5px;
 }
+
 .add-load-btn-quick {
     padding: 5px 10px;
     font-size: 18px;
@@ -393,6 +429,7 @@ button:hover, .btn:hover {
     border-radius: 3px;
     padding: 2px 4px;
 }
+
 .load-name:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
@@ -410,7 +447,7 @@ button:hover, .btn:hover {
     margin: 0;
     font-size: 12px;
     border-radius: 3px;
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(0, 0, 0, 0.3);
     border: 1px solid var(--border-color);
     color: var(--text-color);
     box-sizing: border-box;
@@ -420,7 +457,9 @@ button:hover, .btn:hover {
     width: 35px;
     text-align: center;
     -moz-appearance: textfield;
+    appearance: textfield;
 }
+
 .quantity-input::-webkit-outer-spin-button,
 .quantity-input::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -439,8 +478,9 @@ button:hover, .btn:hover {
     height: 20px;
     line-height: 18px;
 }
+
 .line-name-display:hover {
-    background-color: rgba(255,255,255,0.1);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .load-pill .delete-load-btn {
@@ -452,6 +492,7 @@ button:hover, .btn:hover {
     padding: 0;
     opacity: 0.7;
 }
+
 .load-pill .delete-load-btn:hover {
     opacity: 1;
 }
@@ -465,27 +506,32 @@ button:hover, .btn:hover {
     background-color: #333;
     border: 1px solid var(--border-color);
     border-radius: 4px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     z-index: 1010;
     padding: 10px;
 }
+
 .add-load-popover input {
     margin-bottom: 5px;
 }
 
 /* MODIFICA 1: Aggiunto il selettore per i quadri esistenti per avere la "manina" */
-.popover-results-materials, .popover-results-switchboards, .popover-results-existing-switchboards {
+.popover-results-materials,
+.popover-results-switchboards,
+.popover-results-existing-switchboards {
     max-height: 150px;
     overflow-y: auto;
 }
 
-.popover-results-materials .inventory-item, 
+.popover-results-materials .inventory-item,
 .popover-results-switchboards .inventory-item,
 .popover-results-existing-switchboards .inventory-item {
     margin-bottom: 5px;
-    cursor: pointer; /* Questa proprietà applica la "manina" */
+    cursor: pointer;
+    /* Questa proprietà applica la "manina" */
     padding: 10px;
 }
+
 .popover-results-materials .inventory-item:hover,
 .popover-results-switchboards .inventory-item:hover,
 .popover-results-existing-switchboards .inventory-item:hover {
@@ -503,6 +549,7 @@ button:hover, .btn:hover {
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 3px;
 }
+
 .popover-section-header:first-child {
     margin-top: 0;
 }
@@ -518,17 +565,19 @@ button:hover, .btn:hover {
     cursor: pointer;
     text-align: center;
 }
+
 .quick-add-material-btn:hover {
     background-color: rgba(255, 193, 7, 0.3);
 }
 
 .socapex-group {
-    background-color: rgba(0,0,0,0.2);
+    background-color: rgba(0, 0, 0, 0.2);
     border: 1px solid var(--border-color);
     border-radius: 4px;
     margin: 10px 0;
     padding: 5px;
 }
+
 .socapex-header {
     display: flex;
     justify-content: space-between;
@@ -537,6 +586,7 @@ button:hover, .btn:hover {
     padding: 5px 10px;
     color: var(--primary-color);
 }
+
 .socapex-identifier-input {
     width: 80px;
     height: 28px;
@@ -545,6 +595,7 @@ button:hover, .btn:hover {
     font-size: 14px;
     text-align: center;
 }
+
 .socapex-channel-row {
     padding-left: 20px !important;
     border-top: 1px solid var(--border-color);
@@ -557,73 +608,97 @@ button:hover, .btn:hover {
     padding-left: 10px;
     border-left: 2px solid var(--primary-color);
 }
+
 .child-switchboard-container .card {
     box-shadow: none;
     border: 1px dashed var(--secondary-color);
 }
+
 /* =================================================================== */
 /* STILI PAGINA REPORT (v. COMPATTA)                                   */
 /* =================================================================== */
 
 .report-card {
-    margin-bottom: 25px; /* Ridotto */
-    padding: 20px;       /* Ridotto */
+    margin-bottom: 25px;
+    /* Ridotto */
+    padding: 20px;
+    /* Ridotto */
 }
 
 .report-header {
     border-bottom: 2px solid var(--primary-color);
     margin-bottom: 15px;
-    padding-bottom: 8px; /* Ridotto */
+    padding-bottom: 8px;
+    /* Ridotto */
 }
+
 .report-header h2 {
     margin: 0;
     color: var(--primary-color);
-    font-size: 1.6em; /* Leggermente più grande */
+    font-size: 1.6em;
+    /* Leggermente più grande */
 }
-.report-header h3, .report-header h4 {
-    margin: 4px 0 0 0; /* Ridotto */
+
+.report-header h3,
+.report-header h4 {
+    margin: 4px 0 0 0;
+    /* Ridotto */
     color: var(--text-color);
     font-weight: normal;
 }
+
 .report-header h4 {
     color: var(--secondary-color);
-    font-size: 1em; /* Ingrandito */
+    font-size: 1em;
+    /* Ingrandito */
 }
 
 .phase-report {
     display: flex;
-    gap: 15px; /* Ridotto */
+    gap: 15px;
+    /* Ridotto */
     justify-content: space-between;
-    margin-bottom: 15px; /* Ridotto */
+    margin-bottom: 15px;
+    /* Ridotto */
 }
+
 .phase-box {
     flex: 1;
-    background-color: rgba(0,0,0,0.2);
-    padding: 12px; /* Ridotto */
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 12px;
+    /* Ridotto */
     border-radius: 6px;
     text-align: center;
 }
+
 .phase-box strong {
     font-size: 1.1em;
 }
+
 .phase-values {
-    font-size: 0.95em; /* Ingrandito */
+    font-size: 0.95em;
+    /* Ingrandito */
 }
+
 .phase-percentage {
-    font-size: 0.9em; /* Ingrandito */
+    font-size: 0.9em;
+    /* Ingrandito */
 }
 
 
 .load-bar-container {
     width: 100%;
-    height: 18px; /* Leggermente più sottile */
+    height: 18px;
+    /* Leggermente più sottile */
     background-color: #333;
     border-radius: 10px;
-    margin: 6px 0; /* Ridotto */
+    margin: 6px 0;
+    /* Ridotto */
     overflow: hidden;
     border: 1px solid var(--border-color);
     position: relative;
 }
+
 .load-bar {
     position: absolute;
     top: 0;
@@ -632,30 +707,46 @@ button:hover, .btn:hover {
     border-radius: 10px;
     transition: width 0.5s ease-in-out;
 }
-.load-bar.safe { background-color: #4CAF50; }
-.load-bar.warning { background-color: #ff9800; }
-.load-bar.danger { background-color: var(--danger-color); }
+
+.load-bar.safe {
+    background-color: #4CAF50;
+}
+
+.load-bar.warning {
+    background-color: #ff9800;
+}
+
+.load-bar.danger {
+    background-color: var(--danger-color);
+}
 
 .report-details ul {
     list-style-type: none;
     padding: 0;
 }
+
 .report-details li {
-    padding: 8px; /* Ridotto */
+    padding: 8px;
+    /* Ridotto */
     border-bottom: 1px solid var(--border-color);
 }
+
 .report-details li:last-child {
     border-bottom: none;
 }
+
 .report-details em {
     font-style: normal;
     font-weight: bold;
     color: var(--primary-color);
 }
+
 .report-details div {
     padding-left: 20px;
-    font-size: 1em; /* Ingrandito */
+    font-size: 1em;
+    /* Ingrandito */
 }
+
 .empty-line {
     color: var(--secondary-color);
     font-style: italic;
@@ -665,20 +756,26 @@ button:hover, .btn:hover {
 .socapex-report-group {
     background-color: rgba(255, 255, 255, 0.03);
     border-radius: 4px;
-    padding: 8px; /* Ridotto */
+    padding: 8px;
+    /* Ridotto */
     margin-top: 5px;
 }
+
 .socapex-report-group h5 {
-    margin: 0 0 8px 0; /* Ridotto */
+    margin: 0 0 8px 0;
+    /* Ridotto */
     font-size: 1em;
 }
+
 .socapex-report-group ul {
     margin-top: 5px;
 }
 
 .report-child-switchboard {
-    margin-top: 10px; /* Ridotto */
-    padding-left: 15px; /* Ridotto */
+    margin-top: 10px;
+    /* Ridotto */
+    padding-left: 15px;
+    /* Ridotto */
     border-left: 3px solid var(--primary-color);
 }
 
@@ -696,7 +793,8 @@ button:hover, .btn:hover {
     padding: 10px;
     overflow-x: auto;
     margin-bottom: 30px;
-    transition: box-shadow 0.5s ease-in-out; /* Per l'effetto di evidenziazione */
+    transition: box-shadow 0.5s ease-in-out;
+    /* Per l'effetto di evidenziazione */
 }
 
 /* NUOVO: Stile per l'evidenziazione quando si clicca un link */
@@ -709,11 +807,14 @@ button:hover, .btn:hover {
     padding: 0 !important;
     border: none !important;
 }
+
 .nested-totals-table {
     width: 100%;
-    table-layout: fixed; /* Forza le colonne ad avere larghezza uguale */
+    table-layout: fixed;
+    /* Forza le colonne ad avere larghezza uguale */
     border-collapse: collapse;
 }
+
 .nested-totals-table td {
     border-top: 1px solid var(--border-color) !important;
 }
@@ -721,13 +822,16 @@ button:hover, .btn:hover {
 .spreadsheet-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9em; /* Ridotto leggermente il font */
+    font-size: 1.2em;
+    /* Aumentato ancora font */
     /* RIMOSSO: min-width per permettere alla tabella di essere fluida */
 }
 
-.spreadsheet-table th, .spreadsheet-table td {
+.spreadsheet-table th,
+.spreadsheet-table td {
     border: 1px solid var(--border-color);
-    padding: 7px; /* Ridotto il padding */
+    padding: 4px;
+    /* Ridotto il padding per compensare il font più grande */
     text-align: center;
     vertical-align: middle;
 }
@@ -742,25 +846,32 @@ button:hover, .btn:hover {
 
 .powerbox-name-cell {
     background-color: var(--card-background) !important;
-    font-size: 1.4em;
+    font-size: 1.1em;
+    /* Ridotto font come richiesto */
     font-weight: bold;
     vertical-align: top;
-    padding-top: 12px; /* Ridotto il padding */
+    padding-top: 10px;
+    /* Ridotto il padding */
     color: var(--primary-color);
     /* RIPRISTINO: larghezza iniziale della prima colonna */
-    width: 140px; /* Aumentata leggermente la larghezza */
+    width: 230px;
+    /* Larghezza aumentata per uniformare le tabelle */
 }
+
 .powerbox-name-cell span {
-    font-size: 0.7em;
+    font-size: 0.8em;
+    /* Leggermente aggiustato per bilanciare */
     color: var(--secondary-color);
 }
 
 .soca-header {
     font-size: 1.1em;
+    /* Ridotto font come richiesto */
 }
 
 .soca-subheader {
-    font-size: 0.8em;
+    font-size: 1.0em;
+    /* Aumentato ancora font */
     font-style: italic;
     color: var(--secondary-color);
 }
@@ -768,56 +879,95 @@ button:hover, .btn:hover {
 /* MODIFICA: Stile per le celle dei numeri di riga */
 .channel-number-cell {
     font-weight: bold;
-    background-color: rgba(0,0,0,0.2);
+    background-color: rgba(0, 0, 0, 0.2);
     text-align: left;
-    padding: 6px 5px; /* Ridotto il padding */
-    width: 1px; /* Forza la cella ad essere la più stretta possibile */
-    white-space: nowrap; /* Impedisce al testo di andare a capo */
+    padding: 4px 4px;
+    /* Ridotto il padding */
+    min-width: 230px;
+    /* Larghezza fissa per uniformare Socapex e uscite dirette */
+    white-space: nowrap;
+    /* Impedisce al testo di andare a capo */
 }
+
 .channel-number-cell strong {
     font-size: 1.2em;
-    margin-right: 8px; /* Aumentato leggermente il margine */
+    /* Ridotto leggermente font */
+    margin-right: 6px;
+    /* Aumentato leggermente il margine */
 }
+
 .channel-number-cell span {
-    font-size: 0.8em;
+    font-size: 1.0em;
+    /* Aumentato ancora font */
     color: var(--secondary-color);
     font-weight: normal;
 }
 
 /* Colori delle colonne Socapex */
-.soca-header-0, .soca-col-0 { background-color: rgba(255, 242, 204, 0.1); }
-.soca-header-1, .soca-col-1 { background-color: rgba(217, 234, 211, 0.1); }
-.soca-header-2, .soca-col-2 { background-color: rgba(207, 226, 243, 0.1); }
-.soca-header-3, .soca-col-3 { background-color: rgba(248, 206, 204, 0.1); }
-.soca-header-4, .soca-col-4 { background-color: rgba(217, 217, 217, 0.1); }
-.soca-header-5, .soca-col-5 { background-color: rgba(235, 216, 237, 0.1); }
+.soca-header-0,
+.soca-col-0 {
+    background-color: rgba(255, 242, 204, 0.1);
+}
 
-.direct-header, .direct-col {
+.soca-header-1,
+.soca-col-1 {
+    background-color: rgba(217, 234, 211, 0.1);
+}
+
+.soca-header-2,
+.soca-col-2 {
+    background-color: rgba(207, 226, 243, 0.1);
+}
+
+.soca-header-3,
+.soca-col-3 {
+    background-color: rgba(248, 206, 204, 0.1);
+}
+
+.soca-header-4,
+.soca-col-4 {
+    background-color: rgba(217, 217, 217, 0.1);
+}
+
+.soca-header-5,
+.soca-col-5 {
+    background-color: rgba(235, 216, 237, 0.1);
+}
+
+.direct-header,
+.direct-col {
     background-color: rgba(220, 220, 220, 0.15);
 }
 
 /* NUOVO: Stili per le colonne con classi specifiche per un controllo migliore */
 .spreadsheet-table .material-col {
-    text-align: left; /* Allinea il testo a sinistra */
-    white-space: normal; /* Permette al testo di andare a capo */
-    min-width: 163px; /* Imposta una larghezza minima per evitare che la colonna collassi */
-    width: auto; /* Permette alla colonna di espandersi per riempire lo spazio */
+    text-align: left;
+    /* Allinea il testo a sinistra */
+    white-space: normal;
+    /* Permette al testo di andare a capo */
+    min-width: 163px;
+    /* Imposta una larghezza minima per evitare che la colonna collassi */
+    width: auto;
+    /* Permette alla colonna di espandersi per riempire lo spazio */
 }
 
 .spreadsheet-table .line-col {
-    width: 60px; /* Larghezza per colonna Linea */
+    width: 130px;
+    /* Larghezza aumentata per evitare a capo */
 }
 
 .spreadsheet-table .qta-col {
-    width: 40px; /* Larghezza ridotta */
+    width: 60px;
+    /* Larghezza ridotta */
 }
 
 .spreadsheet-table .watt-col {
-    width: 50px; /* Larghezza ridotta */
+    width: 80px;
+    /* Larghezza ridotta */
 }
 
 .empty-fill {
-    background-color: rgba(0,0,0,0.1) !important;
+    background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 /* NUOVO: Stili per le celle dei totali di fase */
@@ -825,11 +975,13 @@ button:hover, .btn:hover {
     background-color: var(--card-background);
     font-size: 1em;
     font-weight: bold;
-    padding: 8px; /* Ridotto il padding */
+    padding: 8px;
+    /* Ridotto il padding */
     text-align: center;
     vertical-align: middle;
     border: 1px solid var(--border-color);
 }
+
 .phase-total-cell strong {
     color: var(--primary-color);
 }
@@ -838,9 +990,11 @@ button:hover, .btn:hover {
 .phase-total-cell.phase-safe {
     background-color: var(--safe-color-bg);
 }
+
 .phase-total-cell.phase-warning {
     background-color: var(--warning-color-bg);
 }
+
 .phase-total-cell.phase-danger {
     background-color: var(--danger-color-bg);
 }
@@ -853,6 +1007,7 @@ a.jumplink {
     font-weight: bold;
     cursor: pointer;
 }
+
 a.jumplink:hover {
     text-decoration: underline;
 }
@@ -878,6 +1033,22 @@ a.jumplink:hover {
     z-index: 100;
 }
 
+/* Canvas wrapper for large workspace */
+.schema-canvas {
+    position: relative;
+    z-index: 1;
+}
+
+.schema-wrapper {
+    position: relative;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 30px;
+    padding: 50px;
+    z-index: 2;
+}
+
 /* NUOVO: Stile per il credito in basso a sinistra */
 .credit-footer {
     position: fixed;
@@ -898,7 +1069,8 @@ body.pdf-export {
     --border-color: #cccccc;
     --text-color: #000000;
     --text-color-dark: #000000;
-    --primary-color: #d84315; /* Arancione scuro per contrasto */
+    --primary-color: #d84315;
+    /* Arancione scuro per contrasto */
     --secondary-color: #555555;
 }
 
@@ -933,14 +1105,38 @@ body.pdf-export .channel-number-cell {
 }
 
 /* Colori delle colonne Socapex più chiari per stampa */
-body.pdf-export .soca-header-0, body.pdf-export .soca-col-0 { background-color: #fff8e1; }
-body.pdf-export .soca-header-1, body.pdf-export .soca-col-1 { background-color: #e8f5e9; }
-body.pdf-export .soca-header-2, body.pdf-export .soca-col-2 { background-color: #e3f2fd; }
-body.pdf-export .soca-header-3, body.pdf-export .soca-col-3 { background-color: #fbe9e7; }
-body.pdf-export .soca-header-4, body.pdf-export .soca-col-4 { background-color: #f5f5f5; }
-body.pdf-export .soca-header-5, body.pdf-export .soca-col-5 { background-color: #f3e5f5; }
+body.pdf-export .soca-header-0,
+body.pdf-export .soca-col-0 {
+    background-color: #fff8e1;
+}
 
-body.pdf-export .direct-header, body.pdf-export .direct-col {
+body.pdf-export .soca-header-1,
+body.pdf-export .soca-col-1 {
+    background-color: #e8f5e9;
+}
+
+body.pdf-export .soca-header-2,
+body.pdf-export .soca-col-2 {
+    background-color: #e3f2fd;
+}
+
+body.pdf-export .soca-header-3,
+body.pdf-export .soca-col-3 {
+    background-color: #fbe9e7;
+}
+
+body.pdf-export .soca-header-4,
+body.pdf-export .soca-col-4 {
+    background-color: #f5f5f5;
+}
+
+body.pdf-export .soca-header-5,
+body.pdf-export .soca-col-5 {
+    background-color: #f3e5f5;
+}
+
+body.pdf-export .direct-header,
+body.pdf-export .direct-col {
     background-color: #eeeeee;
 }
 
@@ -952,82 +1148,251 @@ body.pdf-export .empty-direct-cell {
     background-color: #e0e0e0 !important;
 }
 
-body.pdf-export .version-footer { display: none; }
+body.pdf-export .version-footer {
+    display: none;
+}
 
 /* =================================================================== */
 /* NUOVI STILI PER SCHEMA UNIFILARE                                    */
 /* =================================================================== */
 #schema-container {
     position: relative;
-    overflow-x: auto;
-    padding: 20px;
-    min-height: 400px;
+    overflow: hidden;
+    padding: 0;
+    height: calc(100vh - 200px);
+    width: 100%;
+    background-color: #1a1d23;
+    cursor: default;
+}
+
+.schema-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.schema-header h2 {
+    margin: 0;
+}
+
+.btn-reset-positions {
+    padding: 6px 12px;
+    font-size: 0.85em;
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-reset-positions:hover {
+    background-color: #868e96;
+    color: white;
 }
 
 /* NUOVO: Stili per la funzionalità di pan (trascinamento con la mano) */
 #schema-container.active-pan {
     cursor: grabbing;
     cursor: -webkit-grabbing;
-    user-select: none; /* Impedisce la selezione del testo durante il drag */
+    user-select: none;
+    /* Impedisce la selezione del testo durante il drag */
+}
+
+/* Canvas wrapper for large workspace with moving grid */
+.schema-canvas {
+    position: relative;
+    z-index: 1;
+    width: 10000px;
+    height: 10000px;
+    min-width: 10000px;
+    min-height: 10000px;
+    /* Grid pattern - this WILL move with scroll */
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    background-position: 0 0;
 }
 
 
 /* NUOVO: Permette al contenitore dello schema di usare tutta la larghezza */
-.full-width-container {
-    max-width: none !important;
-    padding: 0 20px;
-}
+
 
 .schema-wrapper {
-    display: flex;
+    display: inline-flex;
+    gap: 80px;
     align-items: flex-start;
-    gap: 120px; /* Spazio tra le colonne di nodi - AUMENTATO */
-    min-width: fit-content; /* Forza il wrapper ad espandersi con il contenuto */
+    min-width: fit-content;
+    flex-wrap: nowrap;
+    width: max-content;
+    width: max-content;
+    position: relative;
+    margin: 50px;
 }
 
 .schema-column {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 20px; /* Spazio verticale tra nodi nella stessa colonna - RIDOTTO */
+    gap: 30px;
+    align-items: start;
+    flex-shrink: 0;
+    justify-content: flex-start;
 }
 
-.node-container {
+.schema-column.level-1,
+.schema-column.level-2 {
+    justify-content: flex-start;
+    gap: 10px;
+    margin-top: 0;
+}
+
+.item-row {
     display: flex;
-    align-items: flex-start;
-    gap: 65px; /* AUMENTATO per distanziare le utenze dal quadro */
+    flex-direction: row;
+    align-items: start;
+    /* Allinea gli elementi all'inizio della riga */
+    gap: 150px;
+    /* Aumenta lo spazio tra un quadro e i suoi figli */
+    /* margin-bottom: 30px; Rimosso per permettere il posizionamento verticale preciso */
+}
+
+.children-loads-container {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    gap: 80px;
+    /* Spazio tra i figli (quadri o gruppi di carichi) */
 }
 
 .loads-column {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* RIDOTTO */
-    padding-top: 5px; /* RIDOTTO */
+    gap: 5px;
+}
+
+.socapex-wrapper {
+    background: var(--card-background);
+    border: 2px solid var(--primary-color);
+    border-radius: 6px;
+    padding: 8px;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    cursor: grab;
+    margin: 5px;
+    /* Aggiunge un piccolo margine per il placeholder */
+    width: fit-content;
+}
+
+.socapex-wrapper-header {
+    font-size: 0.75em;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-align: center;
+    padding: 4px;
+    background: rgba(255, 193, 7, 0.1);
+    border-radius: 3px;
+    border-bottom: 1px solid var(--primary-color);
+    margin-bottom: 3px;
+}
+
+.socapex-loads-container {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+/* NUOVO: Stili per la vista compatta del Socapex */
+.socapex-compact-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 2px;
+    background: transparent;
+    border-radius: 4px;
+    min-width: 150px;
+}
+
+.socapex-compact-channel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background: transparent;
+    padding: 2px 5px;
+    border-radius: 0;
+    font-size: 0.85em;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.socapex-compact-channel:last-child {
+    border-bottom: none;
+}
+
+.socapex-compact-channel.has-load {
+    background: rgba(255, 193, 7, 0.1);
+    border-color: var(--primary-color);
+}
+
+.socapex-compact-channel .ch-num {
+    font-weight: bold;
+    color: var(--secondary-color);
+    font-size: 0.9em;
+    margin-bottom: 0;
+    margin-right: 10px;
+    min-width: 20px;
+}
+
+.socapex-compact-channel .ch-watts {
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+.socapex-compact-channel.has-load .ch-watts {
+    color: var(--primary-color);
+}
+
+.socapex-wrapper .node {
+    box-shadow: none;
+    min-width: 180px;
+    cursor: default;
+    pointer-events: none;
 }
 
 .node {
     background: var(--card-background);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 15px;
-    min-width: 280px; /* AUMENTATO */
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0;
+    min-width: 300px;
+    margin: 5px;
+    /* Aggiunge un piccolo margine per il placeholder */
     position: relative;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     z-index: 2;
+    overflow: visible;
+    padding-right: 10px;
 }
 
 .node-power-supply {
-    border-style: dashed;
-    border-color: var(--primary-color);
-    min-width: 200px;
+    border: 3px dashed var(--primary-color);
+    min-width: 220px;
+    padding: 20px;
+    text-align: center;
 }
 
 .node-switchboard {
-    border-left: 5px solid var(--primary-color);
+    border: 2px solid var(--primary-color);
+    overflow: visible;
 }
 
 .node-switchboard-error {
-    border-left: 5px solid var(--danger-color);
+    border: 2px solid var(--danger-color);
 }
 
 .node-title.error {
@@ -1035,15 +1400,14 @@ body.pdf-export .version-footer { display: none; }
 }
 
 .node-load {
-    min-width: 180px; /* RIDOTTO */
-    font-size: 0.9em;
-    padding: 8px 12px; /* RIDOTTO */
-    border-left: 3px solid var(--secondary-color);
+    min-width: 180px;
+    border: 1px solid var(--secondary-color);
+    padding: 6px 8px;
 }
 
 .node-title {
     font-weight: bold;
-    font-size: 1.1em;
+    font-size: 1.2em;
     color: var(--primary-color);
     margin-bottom: 10px;
 }
@@ -1059,80 +1423,251 @@ body.pdf-export .version-footer { display: none; }
     gap: 5px;
     font-size: 0.9em;
 }
+
 .node-details strong {
     color: var(--text-color);
 }
+
 .node-details span {
     color: #aaa;
 }
 
-/* Punti di connessione */
-.node-input-point {
-    position: absolute;
-    left: -6px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 12px;
-    height: 12px;
-    background-color: var(--primary-color);
-    border-radius: 50%;
-    border: 2px solid var(--background-color);
+.switchboard-node-body {
+    display: flex;
+    padding: 15px;
+    gap: 15px;
 }
 
-.outlet-dots {
-    position: absolute;
-    right: -40px;
-    top: 0;
-    height: 100%;
+.sw-left-section {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    align-items: flex-end;
+    gap: 3px;
+    flex: 1;
 }
+
+.sw-name {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.sw-identifier {
+    font-size: 0.85em;
+    font-weight: normal;
+    color: var(--secondary-color);
+}
+
+.sw-model {
+    font-size: 0.85em;
+    color: var(--secondary-color);
+}
+
+.sw-outlet-connection {
+    font-size: 0.75em;
+    color: var(--primary-color);
+    font-style: italic;
+    margin-top: 2px;
+}
+
+.sw-serial {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8em;
+    margin-bottom: 8px;
+}
+
+.sw-serial span {
+    color: var(--secondary-color);
+    font-weight: bold;
+}
+
+.sw-serial-input {
+    flex: 1;
+    padding: 2px 6px;
+    font-size: 0.9em;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    color: var(--text-color);
+    margin: 0;
+    cursor: text;
+    pointer-events: auto;
+}
+
+.sw-right-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 15px;
+    border-left: 2px solid var(--border-color);
+}
+
+.phase-totals-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.phase-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.phase-label {
+    font-weight: bold;
+    color: var(--primary-color);
+    min-width: 20px;
+}
+
+.phase-amps {
+    color: var(--secondary-color);
+    font-size: 0.85em;
+    margin-left: 8px;
+}
+
+.load-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.load-compact-id {
+    font-size: 0.7em;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.load-item {
+    font-size: 0.75em;
+    color: var(--text-color);
+    line-height: 1.2;
+    padding: 1px 0;
+}
+
+.load-compact-total {
+    font-size: 0.8em;
+    font-weight: bold;
+    color: var(--primary-color);
+    padding-top: 2px;
+    border-top: 1px solid var(--border-color);
+    margin-top: 1px;
+}
+
+.node-input-point {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    border: 3px solid var(--background-color);
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
+}
+
+.node-switchboard .node-input-point,
+.node-power-supply .node-input-point,
+.node-load .node-input-point {
+    left: -8px;
+    top: 15px;
+}
+
+.socapex-wrapper .node-input-point {
+    top: 15px;
+    /* Posizione fissa per l'input del socapex */
+    transform: none;
+}
+
+.node-output-point {
+    position: absolute;
+    right: -8px;
+    width: 16px;
+    height: 16px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    border: 3px solid var(--background-color);
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
+}
+
+.node-power-supply .node-output-point {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+
+
+
 
 .outlet-container {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
+    position: relative;
 }
 
-.outlet-number {
-    font-size: 12px;
+.outlet-label {
+    font-size: 14px;
     font-weight: bold;
-    color: var(--secondary-color);
+    color: var(--text-color);
+    min-width: 24px;
+    line-height: 1;
 }
 
 .outlet-dot {
-    width: 12px;
-    height: 12px;
-    background-color: var(--secondary-color);
-    border: 1px solid var(--border-color);
-    border-radius: 50%;
-    cursor: pointer;
-}
-.outlet-dot:hover {
+    width: 16px;
+    height: 16px;
     background-color: var(--primary-color);
+    border-radius: 50%;
+    border: 3px solid var(--background-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
+    flex-shrink: 0;
+    /* Rimosso position absolute */
+    position: absolute;
+    right: -37px;
 }
 
-/* Linee di connessione SVG */
+.outlet-dot:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.8);
+}
+
 .connection-lines {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
     z-index: 1;
+    pointer-events: none;
 }
 
-/* MODIFICA: Stile applicato ai path curvi invece che alle linee rette */
 .connection-lines path {
-    stroke: var(--secondary-color);
+    stroke: var(--primary-color);
     stroke-width: 2;
-    stroke-dasharray: 4 2;
-    stroke-linejoin: round; /* NUOVO: Rende gli angoli più morbidi */
-    fill: none; /* Assicura che le curve non abbiano un riempimento colorato */
+    fill: none;
+    opacity: 0.6;
+    cursor: pointer;
+    pointer-events: stroke;
+    stroke-linecap: round;
 }
+
+.connection-lines path:hover {
+    stroke-width: 4;
+    opacity: 1;
+}
+
+.connection-lines .control-point {
+    pointer-events: all;
+}
+
 /* Stili per i pulsanti Copia/Taglia/Incolla */
 .load-pill .copy-load-btn,
 .load-pill .cut-load-btn {
@@ -1143,9 +1678,11 @@ body.pdf-export .version-footer { display: none; }
     padding: 0 4px;
     cursor: pointer;
     opacity: 0.7;
-    font-size: 14px; /* Più grande per essere leggibile */
+    font-size: 14px;
+    /* Più grande per essere leggibile */
     line-height: 1;
 }
+
 .load-pill .copy-load-btn:hover,
 .load-pill .cut-load-btn:hover {
     opacity: 1;
@@ -1159,6 +1696,7 @@ body.pdf-export .version-footer { display: none; }
     margin-left: 5px;
     border-radius: 4px;
 }
+
 .outlet-actions .paste-loads-btn:disabled {
     opacity: 0.4;
     cursor: not-allowed;
@@ -1174,4 +1712,309 @@ body.pdf-export .version-footer { display: none; }
     border-radius: 4px;
     box-shadow: 0 0 8px var(--primary-color);
     opacity: 1;
+}
+
+#schema-container.is-marquee-selecting,
+#schema-container.is-marquee-selecting * {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.marquee-box {
+    position: absolute;
+    border: 1px dashed var(--primary-color);
+    background-color: rgba(255, 193, 7, 0.1);
+    z-index: 2000;
+    pointer-events: none;
+}
+
+.node.selected,
+.socapex-wrapper.selected {
+    box-shadow: 0 0 0 3px var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.node.pre-selected,
+.socapex-wrapper.pre-selected {
+    outline: 2px dashed var(--primary-color);
+    outline-offset: 2px;
+}
+
+.node-placeholder {
+    flex-shrink: 0;
+}
+
+
+.control-point {
+    transition: all 0.2s ease;
+    pointer-events: all;
+}
+
+.control-point:hover {
+    filter: drop-shadow(0 0 4px #ff6b35);
+}
+
+/* =================================================================== */
+/* STILI PER NUOVA FUNZIONALITÀ SCHEMA UNIFILARE                      */
+/* =================================================================== */
+
+.outlet-popover {
+    position: absolute;
+    background: var(--card-background);
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: 2000;
+    width: 320px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.popover-section {
+    margin-bottom: 15px;
+}
+
+.popover-section h4 {
+    margin: 0 0 8px 0;
+    color: var(--primary-color);
+    font-size: 0.9em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 4px;
+}
+
+.popover-search {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: #2c2c2c;
+    color: var(--text-color);
+    font-size: 0.9em;
+}
+
+.popover-item {
+    padding: 8px 12px;
+    margin: 4px 0;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9em;
+}
+
+.popover-item:hover {
+    background-color: var(--primary-color);
+    color: var(--text-color-dark);
+    transform: translateY(-1px);
+}
+
+.popover-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: rgba(128, 128, 128, 0.1);
+}
+
+.popover-item.disabled:hover {
+    background-color: rgba(128, 128, 128, 0.1);
+    color: var(--text-color);
+    transform: none;
+}
+
+.outlet-dot.active {
+    background-color: #ff6b35;
+    box-shadow: 0 0 15px rgba(255, 107, 53, 0.8);
+    transform: scale(1.3);
+}
+
+.drag-line {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1500;
+}
+
+.drag-line path {
+    stroke: var(--primary-color);
+    stroke-width: 3;
+    stroke-dasharray: 5, 5;
+    fill: none;
+    opacity: 0.8;
+}
+
+.connection-preview {
+    stroke: #4CAF50 !important;
+    stroke-width: 3 !important;
+    stroke-dasharray: 8, 4 !important;
+    opacity: 0.9 !important;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: #2c2c2c;
+    color: var(--text-color);
+    font-size: 1em;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+}
+
+.schema-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.schema-actions .btn {
+    padding: 8px 16px;
+    font-size: 0.9em;
+}
+
+.floating-toolbar {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--card-background);
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1500;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.floating-toolbar .btn {
+    padding: 6px 12px;
+    font-size: 0.8em;
+    margin: 0;
+}
+
+.connection-mode {
+    background-color: rgba(76, 175, 80, 0.2);
+    border-color: #4CAF50;
+}
+
+.connection-mode:hover {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.standalone-load {
+    border: 2px dashed var(--secondary-color);
+    background: rgba(108, 117, 125, 0.1);
+    min-width: 200px;
+    cursor: grab;
+}
+
+.standalone-load:hover {
+    border-color: var(--primary-color);
+    background: rgba(255, 193, 7, 0.1);
+}
+
+.standalone-load.dragging {
+    cursor: grabbing;
+    opacity: 0.8;
+    transform: rotate(2deg);
+}
+
+.outlet-dot.drop-target {
+    background-color: #4CAF50;
+    transform: scale(1.5);
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.8);
+}
+
+/* =================================================================== */
+/* STILI PER DOCUMENTAZIONE QUADRI                                     */
+/* =================================================================== */
+
+.docs-preview {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.doc-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    margin: 5px 0;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.doc-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.doc-name {
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 2px;
+}
+
+.doc-size {
+    font-size: 0.8em;
+    color: var(--secondary-color);
+}
+
+.doc-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.doc-download-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+    background-color: var(--primary-color);
+    color: var(--text-color-dark);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.doc-delete-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.docs-section {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
+}
+
+.docs-section h4 {
+    margin: 0 0 10px 0;
+    color: var(--primary-color);
+    font-size: 0.9em;
+}
+
+.no-docs {
+    color: var(--secondary-color);
+    font-style: italic;
+    font-size: 0.9em;
 }
