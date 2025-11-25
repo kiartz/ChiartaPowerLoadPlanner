@@ -650,7 +650,7 @@ function initSwitchboardInventory() {
                 renderSwitchboards();
             }
         } else if (targetButton.classList.contains('edit-btn')) {
-            const sbToEdit = switchboards.find(sb => sb.id === id);
+            const sbToEdit = switchboards.find(sb => sb.id == id);
             if (sbToEdit) {
                 editSwitchboardId.value = sbToEdit.id;
                 editSwitchboardName.value = sbToEdit.name;
@@ -860,4 +860,4 @@ function initSwitchboardInventory() {
             renderSwitchboards();
         }
     };
-});
+}
